@@ -1,0 +1,10 @@
+agent:
+  templates:
+    max_observation_length: 2000000
+  history_processors:
+    - type: default
+    - type: image_parsing
+  tools:
+    bundles:
+      - path: sweagent/tools/text2sql
+      - path: sweagent/tools/text2sql_ablation

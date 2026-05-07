@@ -1,0 +1,387 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/"
+  },
+  "@type": "Dataset",
+  "@id": "https://huggingface.co/datasets/buysideflow/buysideflow",
+  "dct:conformsTo": "http://mlcommons.org/croissant/1.0",
+  "name": "BuySideFlow",
+  "alternateName": "BuySideFlow: A Time-Anchored Benchmark for Executable SQL and SQL-Python Tasks in Chinese Buy-Side Investment Research",
+  "description": "BuySideFlow is a time-anchored benchmark for executable SQL and SQL-Python tasks in Chinese buy-side investment research. The public audit package contains task statements, derived manifests, time-audit metadata, schema summaries where licensing permits, evaluator code, prompt assets, benchmark reports, tool-use logs, and provenance hashes. Full execution requires access to a fixed controlled snapshot of a licensed financial database.",
+  "url": "https://huggingface.co/datasets/buysideflow/buysideflow",
+  "version": "1.0",
+  "dateCreated": "2026-05-06",
+  "dateModified": "2026-05-06",
+  "inLanguage": "zh-CN",
+  "isAccessibleForFree": true,
+  "creator": [
+    {
+      "@type": "Organization",
+      "name": "BuySideFlow Authors"
+    }
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "BuySideFlow Authors"
+  },
+  "keywords": [
+    "text-to-SQL",
+    "SQL-Python",
+    "financial benchmark",
+    "buy-side research",
+    "point-in-time evaluation",
+    "database agents",
+    "Chinese financial data",
+    "provenance"
+  ],
+  "license": {
+    "@type": "CreativeWork",
+    "name": "Restricted research release",
+    "description": "The public audit artifacts are released for research review and benchmark documentation. Licensed database rows, unrestricted query access, database credentials, and source documents are not redistributed. Full benchmark execution requires authorized access to the controlled database snapshot or use of the official evaluation service."
+  },
+  "conditionsOfAccess": "The public audit package is accessible without database credentials. Full execution is restricted to authorized users with access to the fixed licensed database snapshot, such as a read-only managed database instance under the data-provider license, or through an official evaluation service. Users may not export, redistribute, or reconstruct licensed database rows.",
+  "ethicsPolicy": "Task statements are rewritten and anonymized from routine buy-side research workflows and public investment-research materials. The release excludes internal meeting notes, client information, account-specific holdings, raw licensed database rows, and unrestricted database credentials.",
+  "measurementTechnique": [
+    "Executable SQL and SQL-Python workflow evaluation",
+    "Strict CSV output-contract comparison",
+    "Runtime date leakage linting",
+    "Static point-in-time audit over reference SQL and Python",
+    "Provenance hashing for schema assets, prompt assets, reference artifacts, sidecars, evaluator code, judge cache, and database snapshot identifier",
+    "Per-task tool-use logging"
+  ],
+  "additionalProperty": [
+    {
+      "@type": "PropertyValue",
+      "name": "task_count",
+      "value": 404
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "domain_distribution",
+      "value": "stock=166, fund=122, bond=94, macro=22"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "workflow_type_distribution",
+      "value": "SQL-centered=312, Python-mediated=92"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "level_distribution",
+      "value": "L1_retrieval=19, L2_sql_aggregation=261, L3_sql_python_analytics=112, L4_multimodal_or_report=12"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "evaluation_kind_distribution",
+      "value": "csv=392, mixed=5, vision=7"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "time_anchor_source_distribution",
+      "value": "inputs=40, instruction=290, instruction_derived=36, instruction_year=38"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "strict_output_schema",
+      "value": "404/404"
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "future_label_allowed",
+      "value": 13
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "controlled_schema_tables",
+      "value": 108
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "reference_exercised_tables",
+      "value": 78
+    },
+    {
+      "@type": "PropertyValue",
+      "name": "db_snapshot_id_required_for_paper_grade_runs",
+      "value": true
+    }
+  ],
+  "rai:dataCollection": "Tasks were constructed from routine Chinese buy-side research workflows and public investment-research materials, then rewritten into standardized benchmark requests. The public package does not include proprietary source documents or licensed database rows.",
+  "rai:dataPreprocessing": "Task text was anonymized and standardized. A generated manifest is rebuilt from task files, reference artifacts, time-audit results, provenance records, and a small override file for fields that cannot be reliably inferred.",
+  "rai:limitations": "BuySideFlow is a license-aware private-database benchmark. The public audit package supports static inspection and reproducibility of metadata and provenance, but complete local execution requires authorized access to the fixed licensed database snapshot or an official evaluation service.",
+  "rai:personalSensitiveInformation": "The public audit package is designed not to include personal client information, account-specific holdings, database credentials, internal meeting notes, or raw licensed financial rows.",
+  "rai:licenseAndUseTerms": "Public audit artifacts may be used for research review and benchmark documentation. Licensed database rows and unrestricted query access are excluded and remain subject to the original data-provider license.",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "questions_file",
+      "name": "question_dataset_jsonl",
+      "description": "Chinese task statements and instance identifiers.",
+      "contentUrl": "data/dataset/question/dataset.jsonl",
+      "encodingFormat": "application/jsonl",
+      "sha256": "a316d1430c0d941d2daf2ac8abd8aaca54e2d65213728c5e3a2ff3e4ef282a57"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "manifest_file",
+      "name": "manifest_generated_jsonl",
+      "description": "Generated per-task metadata, including domain, level, execution mode, evaluation kind, time-audit status, output schema, reference hashes, sidecar hashes, and row/column counts.",
+      "contentUrl": "data/dataset/manifest.generated.jsonl",
+      "encodingFormat": "application/jsonl",
+      "sha256": "38ef72d5f335621432e4b6091cf7ba6254a36a08b3071379513f863b7aa28e3f"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "manifest_overrides_file",
+      "name": "manifest_overrides_json",
+      "description": "Small manual override file for fields that cannot be reliably inferred, such as task level, necessary as-of-date clarification, empty-result explanation, and future-label reason.",
+      "contentUrl": "data/dataset/manifest_overrides.json",
+      "encodingFormat": "application/json",
+      "sha256": "6357b24aefe57b5571257b0aac50cb9d81c5f3f1c851650bdb04c64e19a4a231"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "dataset_card_file",
+      "name": "dataset_card",
+      "description": "Human-readable dataset card describing task construction, time anchoring, leakage guards, evaluation metrics, provenance, release boundary, and known limitations.",
+      "contentUrl": "data/dataset/DATASET_CARD.md",
+      "encodingFormat": "text/markdown",
+      "sha256": "5b46ca168ad788596d901231c3478a3d87fef58f7b692043110f8b3f8606e77a"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "reference_table_usage_file",
+      "name": "reference_table_usage",
+      "description": "Reference-program table usage summary over the documented schema catalog.",
+      "contentUrl": "data/dataset/reference_table_usage.md",
+      "encodingFormat": "text/markdown",
+      "sha256": "77c8d78a5310499e1e296adc0847b60d6b4a07a67edcbaea82a53a9480912bf6"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "marked_catalog_file",
+      "name": "gildata_table_catalog_reference_marked",
+      "description": "Table catalog with reference-use markings. Public release is subject to schema licensing constraints.",
+      "contentUrl": "data/dataset/gildata_table_catalog.reference_marked.json",
+      "encodingFormat": "application/json",
+      "sha256": "ac75081f54c457950caaadf2bc62976140fa07a40a722242a9820d02c5b4e4f0"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "run_eval_file",
+      "name": "run_eval_py",
+      "description": "Offline evaluator entry point for executing submissions, comparing outputs, exporting benchmark reports, and writing per-task tool-use CSV files.",
+      "contentUrl": "run_eval.py",
+      "encodingFormat": "text/x-python",
+      "sha256": "167fef482e0a0fdf7f5ee6342080fb60b0a816e2bb6169bcfca175ff85862437"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "run_manifest_file",
+      "name": "run_manifest_py",
+      "description": "Manifest generation script.",
+      "contentUrl": "run_manifest.py",
+      "encodingFormat": "text/x-python",
+      "sha256": "7685539d21596fe0de5104fa02b643cc01e580375e3884c3f48f5929f3a479e8"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "run_time_audit_file",
+      "name": "run_time_audit_py",
+      "description": "Static time-audit entry point for reference SQL and Python files.",
+      "contentUrl": "run_time_audit.py",
+      "encodingFormat": "text/x-python",
+      "sha256": "b87e4136a540e1de7d8390a9a930f0ef1b9e9905ef922a09ef8e13ba7cd7c00c"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "business_background_file",
+      "name": "business_background",
+      "description": "Controlled business-background prompt asset used by baseline agents.",
+      "contentUrl": "sweagent/text2sql/assets/business_background.txt",
+      "encodingFormat": "text/plain",
+      "sha256": "d741bc892f315fa412cf0ff22be3c4c8567ca13aaec60bd6b9c7c69a675a552a"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "fund_business_rules_file",
+      "name": "fund_business_rules",
+      "description": "Fund-domain business rules prompt asset used by baseline agents.",
+      "contentUrl": "sweagent/text2sql/assets/fund_business_rules.txt",
+      "encodingFormat": "text/plain",
+      "sha256": "82cf749681083829c9644692c99c914edbfaa4bd1a355d52ca95789f43612857"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "selection_guidance_file",
+      "name": "selection_guidance",
+      "description": "Table-selection and schema-grounding guidance prompt asset used by baseline agents.",
+      "contentUrl": "sweagent/text2sql/assets/selection_guidance.txt",
+      "encodingFormat": "text/plain",
+      "sha256": "d30e47ffc7382c013f48400efcb26f13bb83585a4e097db1b5ea9fc03ac07d84"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "questions",
+      "name": "questions",
+      "description": "One record per benchmark task statement.",
+      "data": {
+        "@id": "questions_file"
+      },
+      "key": {
+        "@id": "questions/instance_id"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "questions/instance_id",
+          "name": "instance_id",
+          "description": "Unique task identifier such as stock_001, fund_042, bond_065, or macro_016.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "questions_file"
+            },
+            "extract": {
+              "column": "instance_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "questions/instruction",
+          "name": "instruction",
+          "description": "Chinese buy-side research request presented to the model.",
+          "dataType": "sc:Text",
+          "source": {
+            "fileObject": {
+              "@id": "questions_file"
+            },
+            "extract": {
+              "column": "instruction"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "manifest",
+      "name": "manifest",
+      "description": "Generated per-task metadata used for audit, reporting, and paper statistics. The manifest is not the evaluation source of truth.",
+      "data": {
+        "@id": "manifest_file"
+      },
+      "key": {
+        "@id": "manifest/id"
+      },
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/id",
+          "name": "id",
+          "description": "Task identifier matching question.instance_id.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/domain",
+          "name": "domain",
+          "description": "Research domain: stock, fund, bond, or macro.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/level",
+          "name": "level",
+          "description": "Task-complexity level: L1_retrieval, L2_sql_aggregation, L3_sql_python_analytics, or L4_multimodal_or_report.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/mode",
+          "name": "mode",
+          "description": "Evaluator execution-mode label. In this release, sql+python denotes SQL-centered tasks executed through a Python wrapper, while python denotes Python-mediated analytical or artifact workflows.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/evaluation_kind",
+          "name": "evaluation_kind",
+          "description": "Output evaluation kind: csv, mixed, or vision.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/time_anchor",
+          "name": "time_anchor",
+          "description": "Structured, extracted, or derived time anchor used for audit and reporting.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/anchor_source",
+          "name": "anchor_source",
+          "description": "Source of the time anchor: inputs, instruction, instruction_derived, or instruction_year.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/output_schema",
+          "name": "output_schema",
+          "description": "Expected output columns or artifact schema derived from reference outputs.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/runtime_date_function",
+          "name": "runtime_date_function",
+          "description": "Reference audit status for prohibited runtime date functions.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/financial_publish_guard",
+          "name": "financial_publish_guard",
+          "description": "Reference audit status for financial disclosure-date guards such as INFOPUBLDATE <= as_of_date.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/snapshot_guard",
+          "name": "snapshot_guard",
+          "description": "Reference audit status for status-window guards such as EFFECTIVEDATE, CANCELDATE, LISTEDDATE, IMPLEMENTDATE, and REMOVEDATE relative to the observation date.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/future_label_allowed",
+          "name": "future_label_allowed",
+          "description": "Whether future realized values are allowed as offline labels rather than point-in-time inputs.",
+          "dataType": "sc:Boolean"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/reference_hash",
+          "name": "reference_hash",
+          "description": "Per-task SHA256 aggregate hash of reference programs and artifacts.",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "manifest/sidecar_hash",
+          "name": "sidecar_hash",
+          "description": "Per-task SHA256 aggregate hash of sidecar files, or the empty hash when no sidecar exists.",
+          "dataType": "sc:Text"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+tools:
+  describe_tables:
+    docstring: Return the description/comment for one or more tables. Use this to understand what a table contains before deciding whether to query it.
+    arguments:
+      - name: tables
+        type: string
+        description: Comma-separated table names, e.g. mf_fundarchives,secumain
+        required: true
+  search_tables:
+    docstring: Search tables by keyword in table name or description. Use this when you need to find tables related to a concept (e.g. "港股", "恒生", "ETF"). Returns matching table names and descriptions.
+    arguments:
+      - name: keywords
+        type: string
+        description: Comma-separated keywords, e.g. 港股,恒生
+        required: true
+  get_trading_days:
+    docstring: Query the trading-day calendar between two dates. Use this when you need exact trading days (not calendar days) for window calculations, MA/return lookbacks, or listing-age checks. Returns a sorted list of trading dates.
+    arguments:
+      - name: start_date
+        type: string
+        description: Start date in YYYY-MM-DD format
+        required: true
+      - name: end_date
+        type: string
+        description: End date in YYYY-MM-DD format
+        required: true
+      - name: markets
+        type: string
+        description: Optional comma-separated SECUMARKET codes, defaults to 83,90
+        required: false
+  get_columns:
+    docstring: List all column names with comments for a single table. Use this when you need to see all columns of a specific table you plan to query.
+    arguments:
+      - name: table_name
+        type: string
+        description: The exact table name to inspect.
+        required: true
+  search_columns:
+    docstring: Search columns by keyword across all tables (or a subset). Returns matching column names and comments. Syntax -- search_columns <kw1>[,<kw2>...] [in <table1>[,<table2>...]]
+    arguments:
+      - name: query
+        type: string
+        description: Keywords and optional table scope. Example -- search_columns INNERCODE,MAINCODE in mf_fundarchives,secumain
+        required: true
+  request_schema:
+    docstring: Request the full schema (all columns with types and comments) for one or more tables.
+    arguments:
+      - name: tables
+        type: string
+        description: Comma-separated table names selected from the schema catalog.
+        required: true
+  run_code:
+    docstring: "【仅用于 submit 前验证代码能否运行、结果是否合理】不是查数据工具，数据探索请用 describe_tables/get_columns/search_columns/request_schema。调用次数有上限，每次调用后系统会显示[第N次，剩余M次]。Same JSON format as submit."
+    signature: "run_code\n<payload>\nEND_RUN_CODE"
+    end_name: "END_RUN_CODE"
+    arguments:
+      - name: payload
+        type: string
+        description: JSON object with mode, sql_code, python_code, result_vars — same format as submit.
+        required: true
+  submit:
+    docstring: Submit the final BuySideFlow answer as one JSON object with mode, sql_code, python_code, result_vars.
+    signature: "submit\n<payload>\nEND_SUBMIT"
+    end_name: "END_SUBMIT"
+    arguments:
+      - name: payload
+        type: string
+        description: The final JSON object for this benchmark instance.
+        required: true

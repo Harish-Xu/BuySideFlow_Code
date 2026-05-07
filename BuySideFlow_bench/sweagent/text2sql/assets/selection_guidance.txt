@@ -1,0 +1,99 @@
+## Indicator -> Table mapping (STRICT -- wrong table = wrong result)
+
+| Indicator | Required table | Key column | Forbidden alternative |
+|-----------|---------------|------------|----------------------|
+| Revenue/profit growth rate | lc_mainindexnew | OPERATINGREVENUEGROWRATE / NETPROFITGROWRATE | [WRONG] lc_qfinancialindexnew |
+| Total profit growth rate | lc_mainindexnew | TOTALPROFEIGROWRATE | [WRONG] lc_maindatanew |
+| 5-year avg profit growth | lc_mainindexnew | AVGNPYOYPASTFIVEYEAR | [WRONG] any substitute column |
+| ROE (pre-computed ratios) | lc_mainindexnew | ROE, also has INFOPUBLDATE | -- |
+| ROE + consolidated flag | lc_maindatanew | ROE, MARK=1, INFOPUBLDATE | use when question requires consolidated statements |
+| Turnover rate | qt_performance | TURNOVERRATE | [WRONG] qt_dailyquote (no TURNOVERRATE) |
+| Negotiable market cap / PEG / PE | lc_dindicesforvaluation | NEGOTIABLEMV / PEG / PE, join by INNERCODE | -- |
+| Index OHLCV (open/high/low/close) | qt_indexquote | HIGHPRICE / CLOSEPRICE / LOWPRICE | [WRONG] qt_dailyquote (stocks only) |
+| Stock OHLCV | qt_dailyquote | CLOSEPRICE / HIGHPRICE / LOWPRICE | [WRONG] qt_indexquote |
+| ETF / LOF / closed-end fund OHLCV | qt_fundsperformancehis | CLOSEPRICE / HIGHPRICE / LOWPRICE, join by INNERCODE | [WRONG] qt_dailyquote (for stocks) |
+| Index constituents | lc_indexcomponent | SECUINNERCODE (stock) / INDEXINNERCODE (index) | -- |
+| Stock name | secumain | SECUABBR | [WRONG] CHINAME, CHINAMEABBR (do not exist) |
+| Point-in-time ST/risk-alert filter | cs_riskalert | RISKALERTTYPE, IMPLEMENTDATE, REMOVEDATE | [WRONG] SECUABBR LIKE '%ST%' for historical/as-of filters |
+| A-share stock universe | secumain | SECUMARKET IN (83, 90), SECUCATEGORY=1 | -- |
+| ChiNext/GEM board | secumain | SECUMARKET=90 | [WRONG] LISTEDSECTOR |
+| Industry classification (Shenwan L1) | lc_exgindustry | FIRSTINDUSTRYCODE, STANDARD=38, IFPERFORMED=1 | -- |
+| Previous trading day | MAX(TRADINGDAY) FROM lc_dindicesforvaluation WHERE TRADINGDAY < ref_date, where ref_date/as_of_date is explicitly provided by the task | -- | [WRONG] qt_tradingdaynew (column is TRADINGDATE not TRADINGDAY); [WRONG] runtime clock dates |
+
+## secumain SECUCATEGORY values
+- SECUCATEGORY=1: stocks (A-share, B-share)
+- SECUCATEGORY=3: funds (ETF, LOF, closed-end fund)
+- SECUCATEGORY=4: indices (e.g. 沪深300)
+Use these when filtering secumain for the right security type.
+
+## Index INNERCODE lookup (CRITICAL)
+
+To find any stock index INNERCODE, ALWAYS query secumain -- never lc_indexbasicinfo:
+  SELECT INNERCODE FROM secumain WHERE SECUCODE='000300' AND SECUMARKET=83 LIMIT 1   -- 沪深300
+  SELECT INNERCODE FROM secumain WHERE SECUABBR='中证白酒' LIMIT 1                   -- named index
+
+Then:
+- Use that INNERCODE as INDEXINNERCODE in lc_indexcomponent to get constituent stocks (SECUINNERCODE)
+- Use that INNERCODE directly in qt_indexquote for index price data
+- lc_indexbasicinfo uses different key columns -- querying it for INNERCODE will cause errors
+
+## Join path rules (CRITICAL -- wrong join key = Unknown column error)
+
+| Table | Join to secumain via | Notes |
+|-------|---------------------|-------|
+| qt_dailyquote | INNERCODE | stock-level |
+| qt_indexquote | INNERCODE | index-level |
+| qt_fundsperformancehis | INNERCODE | fund/ETF-level |
+| qt_performance | INNERCODE | stock-level |
+| lc_dindicesforvaluation | INNERCODE | stock-level |
+| lc_indexcomponent | INDEXINNERCODE (index) / SECUINNERCODE (stock) | -- |
+| lc_mainindexnew | COMPANYCODE | company-level; NO INNERCODE, NO SECUCODE |
+| lc_maindatanew | COMPANYCODE | company-level; NO INNERCODE, NO SECUCODE |
+| lc_exgindustry | COMPANYCODE | company-level |
+| lc_qfinancialindexnew | COMPANYCODE | company-level |
+
+RULE: lc_mainindexnew and lc_maindatanew do NOT have INNERCODE or SECUCODE columns.
+Always join them to secumain via COMPANYCODE to get SECUCODE/SECUABBR/INNERCODE.
+
+## lc_maindatanew vs lc_mainindexnew
+
+| Use case | Table | Notes |
+|----------|-------|-------|
+| Pre-computed ratios (growth rates, ROE, AVGNPYOYPASTFIVEYEAR) | lc_mainindexnew | fast, ready-to-use |
+| Raw financial items, consolidated statements | lc_maindatanew | filter MARK=1 for consolidated |
+| IC analysis over multiple report periods (ENDDATE groups) | lc_maindatanew with MARK=1 | per-period granularity |
+| INFOPUBLDATE (announcement date) | both tables | available in both |
+
+## Column name rules
+- secumain.SECUABBR: the ONLY valid column for stock display names. CHINAME and CHINAMEABBR do NOT exist.
+- For point-in-time ST/*ST exclusion, use cs_riskalert with IMPLEMENTDATE/REMOVEDATE; do not rely only on the current abbreviation in secumain.SECUABBR.
+- TRADINGDAY: date column in quote/valuation tables (qt_dailyquote, qt_indexquote, qt_fundsperformancehis, lc_dindicesforvaluation).
+- TRADINGDATE: date column in qt_tradingdaynew (different name -- do not mix up).
+- ENDDATE: financial reporting period end date (lc_mainindexnew, lc_maindatanew).
+- INFOPUBLDATE: announcement/publish date (lc_mainindexnew, lc_maindatanew).
+- AVGNPYOYPASTFIVEYEAR is a real column in lc_mainindexnew. Do not substitute any other column for it.
+
+## SQL generation rules
+- MySQL 8.0 ONLY. Forbidden: CROSS APPLY, OUTER APPLY, TOP N, ROWNUM, QUALIFY, PIVOT, IIF().
+- Window functions: ROW_NUMBER(), RANK(), PERCENT_RANK(), LAG(), LEAD(), NTILE(), STDDEV() -- all available.
+- GROUP BY: every non-aggregated SELECT column must appear in GROUP BY (only_full_group_by is ON).
+- Do NOT include SQL comments (-- or /* */) inside submitted sql_code strings.
+- Do not invent table or column names not present in the schema.
+- OLS slope entirely in SQL: SUM((x - AVG(x) OVER()) * (y - AVG(y) OVER())) / NULLIF(SUM(POW(x - AVG(x) OVER(), 2)), 0)
+
+## Python rules
+- Preferred libraries: numpy and pandas. If optimization, regression, ML, or plotting is required, use installed scipy, sklearn, matplotlib, or statsmodels only when needed; optional libraries should fail clearly if unavailable.
+- OLS slope: beta = np.polyfit(x, y, 1)[0]  or  ((x-x.mean())*(y-y.mean())).sum() / ((x-x.mean())**2).sum()
+- result_vars must name DataFrame or scalar (int/float) variables. Strings, dicts, and lists are NOT valid answers.
+  - CORRECT: result_df = pd.DataFrame(...)  -->  result_vars: ["result_df"]
+  - WRONG:   final_str = f"periods: {n}..."  -->  result_vars: ["final_str"]  (string cannot be evaluated)
+- result_vars order: list variables in the same order as the question's required outputs.
+- DB access: from db_connector import query_to_dataframe
+- Do not use iterrows(); use vectorized pandas/numpy operations.
+- Raise ValueError with a clear message if data is empty; never use fallback/mock values.
+
+## Mode and submission rules
+- mode=sql: sql_code has the full query; python_code=null; result_vars=[].
+- mode=sql+python: sql_code fetches data; python_code processes it; result_vars lists the final DataFrame/scalar.
+- mode=python: sql_code=null; python_code uses query_to_dataframe() directly.
+- Do NOT include markdown fences (```) inside any JSON field values.

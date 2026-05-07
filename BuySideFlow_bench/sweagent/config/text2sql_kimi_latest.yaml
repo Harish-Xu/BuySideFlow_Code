@@ -1,0 +1,12 @@
+agent:
+  model:
+    name: "kimi-k2.5"
+    api_base: "https://api.moonshot.cn/v1"
+    api_key: "$MOONSHOT_API_KEY"
+    temperature: 0.6
+    top_p: 0.95
+    completion_kwargs:
+      parallel_tool_calls: false
+      extra_body:
+        thinking:
+          type: "disabled"

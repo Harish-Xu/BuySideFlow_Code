@@ -1,0 +1,50 @@
+{
+  "_comment": "Manual overrides only. Do not duplicate fields that can be derived from question/results/evaluator. Supported per-id fields: level, as_of_date, empty_result_reason, future_label_allowed, future_label_reason.",
+  "overrides": {
+    "stock_001": {
+      "future_label_reason": "未来5/20/60日超额收益仅用于观察日后离线因子有效性评估，不作为选股特征、样本筛选条件或point-in-time输入。"
+    },
+    "stock_009": {
+      "future_label_reason": "未来5日、20日超额收益仅作为短期选股因子的事后检验标签，不参与观察日截面特征构造或筛选。"
+    },
+    "stock_015": {
+      "future_label_reason": "未来5/10/20个交易日收益仅用于事后评估趋势因子分层和IC表现，建仓信号只使用观测日前可得价格与样本信息。"
+    },
+    "stock_074": {
+      "future_label_reason": "未来63个交易日收益是EP因子预测能力的离线评估标签，不用于构造EP因子、样本过滤或截面排序。"
+    },
+    "stock_092": {
+      "future_label_reason": "未来20日沪深300收益率用于复盘每次RSRS仓位切换后的结果表现，不作为择时信号计算或仓位决策输入。"
+    },
+    "stock_097": {
+      "future_label_reason": "事件后5/10/20日区间超额收益和延续概率仅用于事后评估拥挤度信号，不参与事件触发条件或拥挤度特征计算。"
+    },
+    "stock_102": {
+      "as_of_date": "2025-12-31"
+    },
+    "stock_155": {
+      "future_label_reason": "realized_excess_return_next_month 是下一月已可验证收益标签，仅用于离线评估预测值，不作为模型特征、训练输入或预测截面筛选条件。"
+    },
+    "bond_034": {
+      "future_label_reason": "触发月份后20个交易日持有收益仅用于事后比较短久期与长久期表现，触发条件只依赖触发月份当时已可得的FR007和国债收益率。"
+    },
+    "bond_047": {
+      "future_label_reason": "未来1年到期或回售规模来自观察日已知的债券期限和回售条款，用于压力窗口统计，不使用观察日后新增披露或市场结果。"
+    },
+    "bond_067": {
+      "future_label_reason": "未来20日最大回撤是高估风险样本的事后验证标签，不用于观察日筛选、排序或转股溢价率分位计算。"
+    },
+    "bond_068": {
+      "future_label_reason": "未来60日赎回结束日条件仅基于观察日前已经公告的赎回安排，用于排除已知近期强赎风险，不使用观察日后新公告。"
+    },
+    "bond_071": {
+      "future_label_reason": "未来一年回售窗口临近标记来自观察日已知回售条款，用于解释回售保护属性，不使用观察日后市场表现或新事件。"
+    },
+    "bond_084": {
+      "future_label_reason": "未来12个月到期规模来自观察日已知债券到期结构，用于衡量集中到期压力，不使用观察日后融资、兑付或二级市场结果。"
+    },
+    "fund_042": {
+      "as_of_date": "2025-12-31"
+    }
+  }
+}

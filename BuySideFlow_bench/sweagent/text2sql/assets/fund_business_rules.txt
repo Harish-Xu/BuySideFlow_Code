@@ -1,0 +1,66 @@
+## Fund Business Rules
+
+### Main share class
+- mf_fundarchives has one row per share class. When the question asks about a fund without naming a share class, use the main share class only.
+- Main share filter: mf_fundarchives.MAINCODE = mf_fundarchives.SECURITYCODE.
+- Without this filter, A/C/E/J share classes can inflate counts, holdings, scale, and performance results.
+
+### Fund NAV and return defaults
+- If the question asks for fund cumulative return, rolling return, drawdown, volatility, Sharpe, Calmar, or NAV-path statistics and does not specify another source, default to adjusted unit NAV / retransformed NAV path.
+- Deduplicate to one row per fund per trading day before computing returns.
+- Downside volatility uses negative daily returns only and is annualized by sqrt(252) unless the question specifies another convention.
+- If the question explicitly asks for unit NAV, accumulated NAV, daily growth rate, a performance table field, or another source table, follow the question.
+
+### Point-in-time fund classification
+- mf_jyfundtype.STANDARD=75 is the JuYuan fund classification standard.
+- Use classification rows effective at the task observation/stat date: EFFECTIVEDATE <= stat_date and (CANCELDATE IS NULL OR CANCELDATE > stat_date) when these fields exist.
+- If multiple effective rows remain, take the latest by EFFECTIVEDATE, INSERTTIME, and ID. Use IFEFFECTED=1 when the table supports it.
+- Do not use the latest database classification for a historical as-of task.
+
+### Active equity funds
+- Active equity funds require all applicable conditions:
+  1. mf_jyfundtype.SECASSETCATCODE IN (1101,1201,1202,1203) at the observation/stat date.
+  2. mf_fundarchives.INVESTMENTTYPE=16 when the task requires active management.
+  3. COALESCE(mf_fundarchives.IFFOF,2) <> 1 when FOFs should be excluded.
+- Use SECASSETCATCODE, not FIRSTASSETCATCODE, for the usual active-equity second-category definition.
+
+### Bond funds, FOF, and fixed-income-plus
+- Bond funds: default JuYuan second-category SECASSETCATCODE IN (1301,1302,1303,1304,1305). Do not mix in偏债混合、QDII bond funds, or bond FOF unless the question asks for them.
+- FOF funds: mf_fundarchives.IFFOF=1. For look-through analysis, use holdings from the same report period and avoid future-disclosed holdings.
+- Fixed-income-plus: prefer JuYuan third-category THIRDASSETCATCODE IN (120401,130202). If third-category is unavailable, fall back to SECASSETCATCODE IN (1204,1302). Whether to require main share, exclude FOF/QDII, or require open-ended funds follows the question.
+
+### Fund scale
+- mf_scaleanalysis.NVI: disclosed NAV/scale for a single share class.
+- mf_scaleanalysis.COMBNVI: combined scale across share classes.
+- Use COMBNVI for 合并规模/合计规模; use NVI for a single share-class scale unless the question says otherwise.
+- TOTALASSET is total fund assets, not NAV scale.
+
+### Purchase and redemption status
+- mf_purchaseandredeem is historical. For current/as-of purchase or redemption status, take the latest row available at the observation date, usually ordered by ENDDATE, INSERTTIME, and ID.
+- APPLYINGTYPE values include 可申购, 暂停申购, 限制大额申购.
+- REDEEMTYPE values include 可赎回, 暂停赎回.
+- LARGEAPPLYINGMAX IS NULL means no upper limit. A fund with NULL satisfies 大额申购上限不低于 X 万元.
+- Correct large-apply filter: LARGEAPPLYINGMAX >= threshold OR LARGEAPPLYINGMAX IS NULL.
+
+### Fund managers
+- A manager has left a fund position when POSTNAME=1, DIMISSIONDATE IS NOT NULL, and DIMISSIONDATE <= reference_date.
+- For company-level 离任人数/离任基金经理, count fully dimissioned managers: managers who left during the period and have no still-incumbent fund at the same company.
+- Do not count a manager who left one fund but still manages another fund at the same company as fully dimissioned.
+- mf_fundmanagernew.MANAGEMENTTIME stores cumulative public-fund management days. Use MANAGEMENTTIME/365.0 for career tenure; do not compute from ACCESSIONDATE to a runtime date.
+- One manager-change event is one fund-date pair with at least one departure. Multiple managers leaving the same fund on the same day count as one event.
+
+### Holdings and look-through
+- Top-N holdings: mf_fundholdingnew.SERIALNUMBER is the rank within each fund and report period; filter SERIALNUMBER <= N when the question asks for 前N大重仓股.
+- Fund stock/bond/industry/asset allocations are report-period data. Use the report period requested by the question and, when required, only holdings disclosed by the observation date.
+- Look-through exposure: expanded exposure = fund_weight_i * underlying_holding_weight_i,j, then aggregate by underlying security/industry/issuer. Keep all weights in consistent decimal or percent units.
+- For FOF/MOM or portfolio-of-funds tasks, do not mix underlying holdings from different report periods unless the question explicitly asks for a rolling or latest-available rule.
+
+### Fund trading and attribution metrics
+- Fund turnover rate should prefer mf_fundtradeinfo when the task asks for disclosed turnover. Use holdings-change estimation only when the question asks for an estimate or the disclosed table is unavailable.
+- Brinson attribution requires portfolio weights, benchmark weights, portfolio returns, and benchmark returns aligned to the same period and industry/sector classification.
+- Active return, tracking error, information ratio, and style drift require benchmark alignment; do not compare fund returns to an unrelated market series.
+
+### Hong Kong securities
+- A-share securities use secumain with SECUMARKET IN (83,90).
+- Hong Kong securities use hk_secumain and qt_hkdailyquote, not secumain/qt_dailyquote.
+- If a fund holding or question includes HK-listed companies, include the HK tables or explicitly restrict the universe according to the question.

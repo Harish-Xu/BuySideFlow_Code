@@ -1,0 +1,434 @@
+[
+  {
+    "table_name": "bond_baseratereference",
+    "table_comment": "基准利率参考指标，收录全国银行间同业拆借中心及上海证券交易所公布的回购定盘利率与银行间市场基准利率参考指标。"
+  },
+  {
+    "table_name": "bond_basicinfo",
+    "table_comment": "本表展现所有债券（除可转债、券商专项资产支持证券以外）的基本要素，涵盖在交易所、银行间、柜台等所有市场上交易的国债、金融债、企业债、短期融资券、资产支持证券、央行票据等各类债券。"
+  },
+  {
+    "table_name": "bond_basicquote",
+    "table_comment": "1.收录所有现券每个交易日行情，包括银行间市场、沪深交易所竞价系统、上交所固定收益平台、深交所综合收益平台、北京证券交易所、三板市场。2.提供当天行情的交易方式、净价、全价、均价、涨跌幅、应计利息、当日是否有交易等数据。"
+  },
+  {
+    "table_name": "bond_bdcreditgrading",
+    "table_comment": "债项信用评级，包含债券的长期评级、短期评级"
+  },
+  {
+    "table_name": "bond_cbvaluationall",
+    "table_comment": "中债估值信息，收录对各类债券的估值数据、涵盖债券违约期间的估值，并且包含“推荐”和“非推荐”估值数据"
+  },
+  {
+    "table_name": "bond_cbyieldcurve",
+    "table_comment": "各类收益率曲线的点信息，本表仅包括标准待偿期的曲线数据，多种预测步长的曲线数据另见表：中债债券收益率曲线"
+  },
+  {
+    "table_name": "bond_code",
+    "table_comment": "债券代码对照表，设置了“统一内部编码”，与发行的债券对应"
+  },
+  {
+    "table_name": "bond_conbdbasicinfo",
+    "table_comment": "可转债基本信息，包含可转换债券的评级人、担保人、主承销商、债券要素、上市情况、以及发行公告中的转股和赎回信息等"
+  },
+  {
+    "table_name": "bond_conbdcallinfo",
+    "table_comment": "可转债券赎回信息，收录可转债赎回信息，包括：赎回价，及触发条件等"
+  },
+  {
+    "table_name": "bond_conbdconvertprice",
+    "table_comment": "可转债转股价格变动，包含可转换债券转股价的历次变动情况"
+  },
+  {
+    "table_name": "bond_conbdexchangequote",
+    "table_comment": "可转换债券行情，包含所有可转换债券(含分离交易可转债、可交换公司债)的行情、成交情况、基础股票收盘价等，并提供根据当天行情计算的转股溢价率、转换平价等。"
+  },
+  {
+    "table_name": "bond_conbdputinfo",
+    "table_comment": "可转债券回售信息，收录可转债回售信息，包括：回售价，及触发条件等。"
+  },
+  {
+    "table_name": "bond_default",
+    "table_comment": "记录债券违约的相关信息"
+  },
+  {
+    "table_name": "bond_issuenew",
+    "table_comment": "债券发行上市与增发，收录债券（可转换债券除外）首次发行、增发的基本信息、发行规模、认购单位和数量等信息"
+  },
+  {
+    "table_name": "bond_sapyieldcurve",
+    "table_comment": "全球债券收益率曲线，收录全球债券收益率曲线的点信息。"
+  },
+  {
+    "table_name": "bond_size",
+    "table_comment": "债券规模变动表"
+  },
+  {
+    "table_name": "c_ed_indicatormain",
+    "table_comment": "收录宏观指标信息，包括指标名称、各种维度。"
+  },
+  {
+    "table_name": "c_ed_macroindicatordata",
+    "table_comment": "收录宏观基础指标时间序列数据"
+  },
+  {
+    "table_name": "cs_intensitytrendadj",
+    "table_comment": "收录境内股票上市之日起基于日、周、月、季、半年、年K线后复权行情衍生计算的趋向、强弱等大类技术指标"
+  },
+  {
+    "table_name": "ed_rmbbaseexchangerate",
+    "table_comment": "人民币基准汇价，收录人民币对其他主要币种的基准汇价，包含中国外汇交易中心披露的人民币对100单位外币的中间价的期初期末价、最高最低价等"
+  },
+  {
+    "table_name": "fin_derivative",
+    "table_comment": "基于2018年新会计准则计算的财务指标，反映公司每股指标、资本结构情况以及盈利、偿债、成长、营运、分红、现金流等能力的指标。表汇总了原有的指标表累计报告期维度指标"
+  },
+  {
+    "table_name": "index_finindicator",
+    "table_comment": "指数财务指标表，本表记录主要A股、港股指数的财务分析衍生指标，包括净资产收益率、总资产净利率、销售净利率等指标。"
+  },
+  {
+    "table_name": "lc_auditopinion",
+    "table_comment": "公司历年审计意见,收录中介机构对公司季度、半年度、年度经营情况的评价，区分审计单位、审计意见类型，本表涵盖了公司招股以来的历次纪录。"
+  },
+  {
+    "table_name": "lc_balancesheetall",
+    "table_comment": "资产负债表，年报、中报、季报中披露的资产负债表数据"
+  },
+  {
+    "table_name": "lc_business",
+    "table_comment": "公司经营范围与行业变更，收录上市公司、发债公司的经营范围（包括主营和兼营）以及涉足行业情况"
+  },
+  {
+    "table_name": "lc_competitor",
+    "table_comment": "公司竞争关系,记录公司的竞争企业列表，可通过行业、产品等确定竞争企业"
+  },
+  {
+    "table_name": "lc_derivativedata",
+    "table_comment": "公司衍生报表数据，由上市公司的主要会计科目（合并报表）衍生出来的数据，该表优先取合并未调整数据；若某个报告期存在多条合并未调整数据，则展示最新合并未调整数据"
+  },
+  {
+    "table_name": "lc_dindicesforvaluation",
+    "table_comment": "公司估值分析日指标，收录市盈率、市净率、市销率等估值指标"
+  },
+  {
+    "table_name": "lc_dividend",
+    "table_comment": "公司分红，该表包括上市公司历次分红预案及实施进展，以及下年分配次数、方式等，以分红事件为维度，一次分红做一条记录"
+  },
+  {
+    "table_name": "lc_equitypenetrate",
+    "table_comment": "公司股权穿透，录上市公司的实际控制人、股东等股权关系；同时记录部分发债人、非上市非发债人的控股股东、实际控制人、股东等信息。"
+  },
+  {
+    "table_name": "lc_exgindustry",
+    "table_comment": "公司行业划分表，收录中信行业划分、GICS行业划分、申万行业划分、中证指数行业分类等各种划分标准下的所属行业情况。"
+  },
+  {
+    "table_name": "lc_indexbasicinfo",
+    "table_comment": "指数基本情况，收录了市场上主要指数的基本情况，包括指数类别、成份证券类别、发布机构、发布日期、基期基点、指数发布的币种等信息。"
+  },
+  {
+    "table_name": "lc_indexcomponent",
+    "table_comment": "指数成份，收录了市场上主要指数的成份证券构成情况，包括成份证券的市场代码、入选日期、删除日期以及成份标志等信息。"
+  },
+  {
+    "table_name": "lc_indexcomponentsweight",
+    "table_comment": "指数成份股权重，收录了市场上主要指数成份证券的权重信息，包括中证指数有限公司每月发布的“沪深300”指数的权重数据等。中证基金指数暂不提供权重数据，展示为0。"
+  },
+  {
+    "table_name": "lc_indexderivative",
+    "table_comment": "本表记录A股、港股主要股票指数的衍生指标，包括指数总市值、静态市盈率、动态市盈率、市净率、股息率等指标。"
+  },
+  {
+    "table_name": "lc_maindatanew",
+    "table_comment": "公司报告期主要会计数据-展示上市公司、发债主体，定期报告维度下的主要指标，包含原始财务数据（如总资产、总负债、营业收入等）"
+  },
+  {
+    "table_name": "lc_mainindexnew",
+    "table_comment": "公司主要财务分析指标表，根据报告期公布的财务科目数据衍生而来的每股指标，以及反映公司盈利、偿债、成长、营运、分红、现金流、资本结构等能力的指标。"
+  },
+  {
+    "table_name": "lc_mainoperincome",
+    "table_comment": "公司主营业务构成：公司主营业务的收入来源、成本构成；主营业务收入、成本和利润与上年同期的对比较"
+  },
+  {
+    "table_name": "lc_mainshlistnew",
+    "table_comment": "股东名单,收录公司主要股东构成及持股数量比例、持股性质等明细资料，包括发行前和上市后的历次变动记录。"
+  },
+  {
+    "table_name": "lc_qfinancialindexnew",
+    "table_comment": "公司单季财务指标：上市企业(含科创板)、发债企业的单季主要财务指标信息"
+  },
+  {
+    "table_name": "lc_relatedtrade",
+    "table_comment": "公司关联交易明细，收录上市公司中披露的与关联企业之间的各类关联交易，包括购买商品、接受劳务、销售商品、应收帐款、支付费用、支付利息、租赁、资产重组、提供担保等等30多个类型。"
+  },
+  {
+    "table_name": "lc_relationship",
+    "table_comment": "公司关联关系明细，.收录上市公司、债券发行人定期报告中披露的控股参股企业数据，包括关联企业名称、关联关系，关联企业注册资本、权益比例、投资金额、主营业务等指标。"
+  },
+  {
+    "table_name": "lc_rewardstat",
+    "table_comment": "公司管理层报酬统计，按报告期统计管理层的报酬情况，包括报酬总额、前三名董事报酬、前三名高管报酬、报酬区间统计分析等。"
+  },
+  {
+    "table_name": "lc_sharestru",
+    "table_comment": "公司股本结构变动，收录上市公司股本结构历史变动情况。其中：标注“披露”的字段为公司公告原始披露，标注“计算”的字段为聚源依据股权登记日，并且考虑高管股锁定的实际情况计算所得的股本结构。"
+  },
+  {
+    "table_name": "lc_stibmainindex",
+    "table_comment": "科创板主要财务分析指标，由上市公司的主要会计科目（合并报表）衍生出来的数据"
+  },
+  {
+    "table_name": "lc_stibsuspendresume",
+    "table_comment": "科创板停复牌，收录上海交易所披露科创板停牌复牌信息及科创板上市公司临时公告信息，如停牌日期、停牌时间、停牌事项说明、停牌期限、复牌日期、复牌时间等，包括盘中临时停牌。"
+  },
+  {
+    "table_name": "lc_suppcustattach",
+    "table_comment": "公司供应商与客户附表,收录企业供应商与客户明细表中供应商、客户的具体清单，以及交易金额、占比等信息。"
+  },
+  {
+    "table_name": "lc_suppcustdetail",
+    "table_comment": "供应商客户明细表，记录公司供应商和客户明细信息，用于分析公司供应链和客户集中度"
+  },
+  {
+    "table_name": "lc_suspendresumption",
+    "table_comment": "停牌复牌表,收录上市公司/基金/债券停牌复牌信息，如停牌日期、停牌时间、停牌原因、停牌事项说明、停牌期限、复牌日期、复牌时间、复牌事项说明等，包括盘中临时停牌。"
+  },
+  {
+    "table_name": "lc_transferplan",
+    "table_comment": "股东增减持计划表，收录上市公司(包含科创板)股东增持计划、减持计划、被动减持计划、不减持类别指标。"
+  },
+  {
+    "table_name": "mf_bondcreditgrading",
+    "table_comment": "公募基金债券投资信用评级，记录基金年报、半年报公布债券投资信用评级信息"
+  },
+  {
+    "table_name": "mf_bondportifoliodetail",
+    "table_comment": "公募基金债券组合明细，记录基金债券组合中重仓的债券及处于转股期的可转换债券明细，包括债券代码、持有数量、持有市值、市值占净资产的比例等数据"
+  },
+  {
+    "table_name": "mf_fundarchives",
+    "table_comment": "公募基金概况,本表记录了基金基本情况，包括基金规模、成立日期、投资类型、管理人、托管人、存续期、历史简介等。"
+  },
+  {
+    "table_name": "mf_purchaseandredeem",
+    "table_comment": "基金申购赎回状态表，记录基金大额申购上限、申购状态、赎回状态等信息"
+  },
+  {
+    "table_name": "mf_fundmanagernew",
+    "table_comment": "基金经理基础信息，记录历任基金经理、基金经理助理的任职起止日期、任职期间最新的净值增长率等"
+  },
+  {
+    "table_name": "mf_fundportifoliodetail",
+    "table_comment": "公募基金持仓组合明细，记录基金年报、半年报公布的股票、债券、衍生品、资产支持证券等各类资产的持仓明细，包括资产代码、持有数量、持有市值、市值占净资产的比例等数据"
+  },
+  {
+    "table_name": "mf_fundprodname",
+    "table_comment": "公募基金产品名称,本表记录基金的交易所披露简称、集中申购简称、ETF申购赎回简称等基金相关的名称类信息。"
+  },
+  {
+    "table_name": "mf_fundtype",
+    "table_comment": "公募基金分类表,本表记录各类型的基金分类标准体系，及发布分类体系的机构。"
+  },
+  {
+    "table_name": "mf_holderinfo",
+    "table_comment": "公募基金持有人结构信息,本表记录基金份额持有人户数、持有人结构，包括机构、个人持有份额的详细数据、占比等。前十大持有的持有份额合计、占比等数据。"
+  },
+  {
+    "table_name": "mf_industryportall",
+    "table_comment": "公募基金股票投资组合行业分类总表，记录公募基金、QDII基金行业投资分布信息，包括行业的名称、代码、行业市值、该行业市值占基金净资产的比例等。"
+  },
+  {
+    "table_name": "mf_portfoliodetailsall",
+    "table_comment": "基金组合持仓全景数据"
+  },
+  {
+    "table_name": "mf_scaleanalysis",
+    "table_comment": "本表记录公募基金规模与份额的相关统计指标。计算规则如下：（1）披露值：表示基金定报披露的数据。（2）合并值：将全部分开披露的子基金进行加总。"
+  },
+  {
+    "table_name": "mf_stockportfoliodetail",
+    "table_comment": "公募基金股票组合明细，记录基金年报、半年报公布的股票持仓明细，包括股票代码、持有数量、持有市值、市值占净资产的比例等数据"
+  },
+  {
+    "table_name": "qt_dailyquote",
+    "table_comment": "股票日行情表，收录股票、债券（不包含银行间交易的债券）、基金、指数每个交易日收盘行情数据，包括昨收盘、今开盘、最高价、最低价、收盘价、成交量、成交金额、成交笔数等行情指标。"
+  },
+  {
+    "table_name": "qt_fundsperformancehis",
+    "table_comment": "上市基金历史行情,展示在交易所交易的封闭式基金、LOF等，历史行情表现信息，包括当日、近1周、近1月、近1年的表现情况。"
+  },
+  {
+    "table_name": "qt_indexquote",
+    "table_comment": "指数行情,收录了指数每日的行情数据，包括了国内指数发布机构发布的常用指数的高、开、低、收等信息；"
+  },
+  {
+    "table_name": "qt_osindexquote",
+    "table_comment": "境外指数行情(含香港)，主要收录了境外指数发布方(如标普、MSCI等)发布/提供的指数行情；以及在港交所、台交所、纽交所、新加坡交易所、欧洲交易所等境外市场上市或在这些境外市场发布的指数行情。"
+  },
+  {
+    "table_name": "qt_performance",
+    "table_comment": "股票行情表现,收录股票从最近一个交易日往前追溯一段时期的行情表现信息，包括近1周、1周以来、近1月、1月以来、近3月、近半年、近1年、今年以来、上市以来的表现情况，以及β、α、波动率、夏普比率等风险指标。"
+  },
+  {
+    "table_name": "qt_performancedata",
+    "table_comment": "A股行情表现相关的特色指标数据，如连涨天数、是否破发、是否破净、是否创历史新高或新低等指标，其中判断是否为历史新高或新低的价格均为后复权价格。"
+  },
+  {
+    "table_name": "qt_pricelimit",
+    "table_comment": "涨跌停价格表，记录股票每日涨跌停价格和申报限额信息，用于交易风险控制"
+  },
+  {
+    "table_name": "qt_tradingdaynew",
+    "table_comment": "本表收录各个市场的交易日信息，包括每个日期是否是交易日，是否周、月、季、年最后一个交易日"
+  },
+  {
+    "table_name": "secumain",
+    "table_comment": "证券主表:本表收录单个证券品种（股票、基金、债券）的代码、简称、上市交易所等基础信息。"
+  },
+  {
+    "table_name": "mf_benchmarkallocation",
+    "table_comment": "公募基金基准配置，记录基金业绩比较基准的相关配置信息，如基准指数及比例、执行取消日期等"
+  },
+  {
+    "table_name": "mf_fundnetvalueretrans",
+    "table_comment": "记录开放式基金每日单位基金净值、封闭式每周单位基金净值，以及基金复权单位净值和净值日增长率。"
+  },
+  {
+    "table_name": "mf_fundtradeinfo",
+    "table_comment": "公募基金股票交易信息，记录了中报、年报中公布报告期内股票买卖金额信息，包括买入股票成本、卖出股票收入等数据。"
+  },
+  {
+    "table_name": "mf_jyfundtype",
+    "table_comment": "公募基金聚源分类"
+  },
+  {
+    "table_name": "mf_personalinfo",
+    "table_comment": "公募基金经理基本资料，包括学历、证券从业经验、背景介绍等信息，其中背景一般涵盖基金经理的性别、国籍、学历、历史任职公司、历史管理基金等"
+  },
+  {
+    "table_name": "bond_conceptnature",
+    "table_comment": "债券概念分类、涵盖市场上热门分类，如绿色债、金融债、城投债、城投债各类细分。还涵盖发改委专项债、地方政府新增债、地方政府置换债、地方政府项目收益专项债等等。"
+  },
+  {
+    "table_name": "bond_creditgrading",
+    "table_comment": "债券信用评级表，记录债券、发债主体、s担保人的信用评级信息，包括评级机构、评级日期、信用级别、评级展望等"
+  },
+  {
+    "table_name": "bond_chinabondindexquote",
+    "table_comment": "中债指数行情表,收录了包含中国债券总指数、固定利率债券指数、浮动利率债券指数、国债总指数、中短期债券指数、长期债券指数、银行间债券总指数、交易所国债指数、固定利率国债指数、浮动利率国债指数、金融债券总指数、固定利率金融债指数、浮动利率金融债指数、银行间国债指数、七年期国债指数等各类中债指数。3.上述15类中债指数不仅包含总指数，还包含根据期限选择标准进行细分的“1年以下”、“1-3年”、“3-5年”、“5-7年”、“7-10年”、“10年以上”6种分类指数"
+  },
+  {
+    "table_name": "bond_indexbasicinfo",
+    "table_comment": "债券指数基本信息表"
+  },
+  {
+    "table_name": "bond_repuexibquote",
+    "table_comment": "交易所及银行间回购交易行情,收录每个交易日，上海交易所、深圳交易所以及银行间市场上，所有债券回购的盘后行情数据"
+  },
+  {
+    "table_name": "mf_investadvisoroutline",
+    "table_comment": "公募基金管理人概况,记录了基金管理人的基本情况介绍，包括成立日期、注册资本、法人代表、联系方式、背景简介等"
+  },
+  {
+    "table_name": "mf_keystockportfolio",
+    "table_comment": "公募基金重仓股票组合,记录基金季报公布重仓股票组合信息，主要包括前十大持有股票的股票代码、数量、市值、占净资产的比例等数据"
+  },
+  {
+    "table_name": "mf_issueandlisting",
+    "table_comment": "本表记录基金发行与上市相关信息，包括发行上市的日期、发行状态、发起人认购情况等相关信息。"
+  },
+  {
+    "table_name": "lc_instiarchive",
+    "table_comment": "机构基本资料表，记录机构（主要是上市公司、基金公司、证券公司等）的基本信息，包括企业性质、企业类别、注册信息、联系方式等"
+  },
+  {
+    "table_name": "mf_shinfluence",
+    "table_comment": "基金持有人结构数据表，记录基金的持有人信息，包括持有人性质、持有份额、持有比例等，用于分析基金的投资者结构和资金流向。"
+  },
+  {
+    "table_name": "mf_chargeratenew",
+    "table_comment": "基金费率信息表，记录基金的各种费率信息，包括管理费、托管费、申购费、赎回费等"
+  },
+  {
+    "table_name": "mf_investtargetcriterion",
+    "table_comment": "基金投资标的准则表，记录基金的投资标的、投资比例等信息"
+  },
+  {
+    "table_name": "hk_secumain",
+    "table_comment": "本表收录港股单个证券品种的简称、上市交易所等基础信息。"
+  },
+  {
+    "table_name": "qt_hkdailyquote",
+    "table_comment": "港股行情库表,包含主要字段有：最高价、最低价、开盘价、昨收盘价、收盘价、涨跌幅、交易单位、成交量、成交额等。"
+  },
+  {
+    "table_name": "nq_secumain",
+    "table_comment": "记录三板在审和挂牌公司以及转板所对应的主板证券的证券代码、简称、类别、市场、上市日期、上市状态等信息"
+  },
+  {
+    "table_name": "nq_dailyquote",
+    "table_comment": "三板每日行情"
+  },
+  {
+    "table_name": "nq_exgindustry",
+    "table_comment": "三板公司所属行业"
+  },
+  {
+    "table_name": "lc_stibdailyquote",
+    "table_comment": "科创板日行情，收录科创板每个交易日收盘行情数据，包括昨收盘、今开盘、最高价、最低价、收盘价、成交量、成交金额、成交笔数等行情指标。"
+  },
+  {
+    "table_name": "lc_stibexgindustry",
+    "table_comment": "科创板公司行业划分,收录科创板上市公司在证监会行业划分、中信行业划分、GICS行业划分、申万行业划分、中信建投、中银(BOCI)行业分类、中证指数行业分类、聚源行业划分等各种划分标准下的所属行业情况。"
+  },
+  {
+    "table_name": "bond_comcreditgrading",
+    "table_comment": "本表收录各评级机构公布的债券发行人、债券担保人及银行的信用评级数据，包括国内评级，国外评级以及所有历史变动记录。"
+  },
+  {
+    "table_name": "bond_biindustry",
+    "table_comment": "本表记录债券主体，包括发行人、原始权益人等行业划分情况。"
+  },
+  {
+    "table_name": "mf_assetallocationnew",
+    "table_comment": "基金资产的大类配置情况，包括股票、债券、银行存款和清算备付金、其他资产、买入返售证券、卖出回购证券、国债及货币资金、可转换债券等。"
+  },
+  {
+    "table_name": "mf_benchmarkgrowthrate",
+    "table_comment": "本表记录基金对应的基准的日收益率表现情况。"
+  },
+  {
+    "table_name": "bond_bondindexquote",
+    "table_comment": "上证债券指数、中证债券指数、深证债券/国证债券指数等指数的行情数据"
+  },
+  {
+    "table_name": "lc_conceptlist",
+    "table_comment": "A股市场中热点概念的相关信息"
+  },
+  {
+    "table_name": "lc_merger",
+    "table_comment": "公司吸收合并，收录上市公司吸收合并事件的首次披露、预案公告、换股比例、发行股份、财务规模及实施进展等信息。"
+  },
+  {
+    "table_name": "lc_stibdividend",
+    "table_comment": "科创板A股分红信息；以事件进程为维度，同一次分红按意向、预案、决案、方案实施等多条记录展示。"
+  },
+  {
+    "table_name": "nq_dividend",
+    "table_comment": "三板分红,公司分红派息、送股、转股等信息"
+  },
+  {
+    "table_name": "nq_mainindexnew",
+    "table_comment": "三板公司主要财务分析指标,包括每股指标，以及反映公司盈利、偿债、成长、营运、分红、现金流、资本结构等能力的指标；若某个报告期的数据有多次调整，则该表展示最新合并调整数据；若某报告期暂未披露调整后数据，则展示调整前的合并数据，通过合并标志字段体现。2. TTM指标为滚动计算的指标，即最近四个季度的单季数据之和。(1)最新报告期（EndDate）是年报，则TTM=年报数据；(2)最新报告期（EndDate）非年报，则TTM=本期数据+(上年年报数据-上年同期合并数据)，上年年度值和上年同期值的取值条件为：公布时间早于等于本期且最新；如果本期、上年年报、上年同期(合并数)存在空值且对应报告期未披露或为非完整公告，则返回上年期末。"
+  },
+  {
+    "table_name": "cs_riskalert",
+    "table_comment": "股票被实施风险警示的开始时间和结束时间，包括其他风险警示，退市风险警示，叠加风险警示，暂停上市，特别转让，退市整理期等"
+  },
+  {
+    "table_name": "lc_coconcept",
+    "table_comment": "公司所属概念板块，记录证券调入/调出概念板块的日期、指标状态及备注信息。"
+  }
+]

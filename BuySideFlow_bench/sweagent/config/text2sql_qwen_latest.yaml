@@ -1,0 +1,8 @@
+agent:
+  model:
+    name: "qwen3-max"
+    api_base: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+    api_key: "$DASHSCOPE_API_KEY"
+    per_instance_cost_limit: 0.0
+    completion_kwargs:
+      parallel_tool_calls: false
