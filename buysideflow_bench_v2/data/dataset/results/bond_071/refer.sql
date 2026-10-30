@@ -1,0 +1,43 @@
+WITH active_bonds AS (
+    SELECT bc.INNERCODE, bc.MAINCODE, bc.SECUCODE, bc.SECUABBR
+    FROM bond_code bc
+    JOIN bond_conbdbasicinfo b ON b.INNERCODE = bc.INNERCODE
+    WHERE bc.BONDTYPELEVEL1 = 2200
+      AND b.BONDFORM = 1
+      AND b.STARTDATE < '2025-07-01'
+      AND (b.INITIALINFOPUBLDATE < '2025-07-01'
+           OR (b.INITIALINFOPUBLDATE IS NULL AND bc.LISTEDDATE < '2025-07-01'))
+      AND (bc.LISTEDDATE IS NULL OR bc.LISTEDDATE < '2025-07-01')
+      AND (bc.INTERESTENDDATE IS NULL OR bc.INTERESTENDDATE >= '2025-06-30')
+      AND (bc.DELISTDATE IS NULL OR bc.DELISTDATE >= '2025-06-30')
+      AND (b.ENDDATE IS NULL OR b.ENDDATE >= '2025-06-30')
+      AND (b.LISTEDENDDATE IS NULL OR b.LISTEDENDDATE >= '2025-06-30')
+      AND (b.TRADEENDDATE IS NULL OR b.TRADEENDDATE >= '2025-06-30')
+      AND (b.LASTTRADINGDATE IS NULL OR b.LASTTRADINGDATE >= '2025-06-30')
+      AND (b.DELISTDATE IS NULL OR b.DELISTDATE >= '2025-06-30')
+), visible_terms AS (
+    SELECT p.INNERCODE, p.PUTSTARTDATE, p.PUTLEVEL
+    FROM bond_conbdputinfo p
+    JOIN active_bonds b ON b.INNERCODE = p.INNERCODE
+    WHERE p.DATATYPE = 1
+      AND p.INSERTTIME < '2025-07-01'
+      AND p.PUTSTARTDATE IS NOT NULL
+      AND p.PUTLEVEL > 0
+), first_starts AS (
+    SELECT INNERCODE, MIN(PUTSTARTDATE) AS put_start_date
+    FROM visible_terms
+    GROUP BY INNERCODE
+)
+SELECT b.INNERCODE, b.MAINCODE, b.SECUCODE, b.SECUABBR,
+       f.put_start_date,
+       CAST(p.PUTLEVEL AS CHAR) AS trigger_ratio_pct,
+       CAST(q.NEWCONVETPRICE AS CHAR) AS conversion_price,
+       CAST(q.STOCKPRICE AS CHAR) AS stock_price
+FROM active_bonds b
+JOIN first_starts f ON f.INNERCODE = b.INNERCODE
+JOIN visible_terms p
+  ON p.INNERCODE = f.INNERCODE AND p.PUTSTARTDATE = f.put_start_date
+LEFT JOIN bond_conbdexchangequote q
+  ON q.INNERCODE = b.INNERCODE AND q.TRADINGDAY = '2025-06-30'
+WHERE f.put_start_date >= '2025-07-01' AND f.put_start_date < '2026-01-01'
+ORDER BY b.SECUCODE, p.PUTLEVEL;

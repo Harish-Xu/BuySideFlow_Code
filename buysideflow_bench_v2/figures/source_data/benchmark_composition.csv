@@ -1,0 +1,12 @@
+facet,category,count,denominator,share
+Domain,Equity,166,408,0.4068627450980392
+Domain,Fund,125,408,0.30637254901960786
+Domain,Fixed income,93,408,0.22794117647058823
+Domain,Macro,24,408,0.058823529411764705
+Analysis pipeline,SQL-native,254,408,0.6225490196078431
+Analysis pipeline,SQL+Python analytics,154,408,0.37745098039215685
+Reference mode,SQL+Python files,344,408,0.8431372549019608
+Reference mode,Python file,64,408,0.1568627450980392
+Output,CSV,401,408,0.9828431372549019
+Output,Mixed,1,408,0.0024509803921568627
+Output,Vision,6,408,0.014705882352941176

@@ -1,0 +1,82 @@
+You are working with a MySQL 8.0 JYDB/gildata financial database. Use these rules only as cross-domain background; task-specific fund or bond rules are injected separately when relevant.
+
+## Data conventions
+- TRADINGDAY: market trading date in quote, valuation and performance tables.
+- TRADINGDATE: date column in qt_tradingdaynew; do not confuse it with TRADINGDAY.
+- ENDDATE: financial reporting period end date.
+- INFOPUBLDATE: information publish date.
+- For fin_derivative, lc_maindatanew and nq_mainindexnew, deduplicate periodic financial rows by COMPANYCODE+ENDDATE with MARK priority 1 > 8 > 7 > 6 > 2 unless the task states another report口径. Do not apply this to other MARK fields; use IFMERGED/IFADJUSTED when available.
+- Use INNERCODE for security-level joins and COMPANYCODE for company-level joins.
+- A-share stock universe: secumain WHERE SECUMARKET IN (83,90) AND SECUCATEGORY=1.
+- Hong Kong stocks are in hk_secumain, not secumain.
+
+## Point-in-time admissibility
+- Extract the temporal anchor before writing code: as_of_date, observation date, event date, formation date, report date, holding period and output horizon.
+- For historical/as-of tasks, universe, membership, status, rating, classification, manager tenure, purchase/redemption state, listing/trading state and default flag must be valid at the anchor date.
+- Do not use database-current latest rows for a historical condition unless the task explicitly asks for current/latest data.
+- If a task has no historical anchor and asks for latest/current data, derive the latest valid database date from the relevant table rather than the runtime clock.
+- **Sample eligibility**: When a task screens securities/funds/companies (e.g., "A-share listed companies as of 2025-04-30"), determine eligibility using the status valid at the observation date (e.g., historical lc_liststatus records), not the database-current LISTEDSTATE/IFEFFECTED snapshot. A security that was listed at the observation date but later delisted should be included; one that lists after the observation date should be excluded.
+
+## Disclosure and validity windows
+- **Morning meeting / pre-open**: Unless the task says otherwise, "X日晨会/盘前" uses quote and trading data through the previous trading day. Announcements, financial statements and macro releases must be disclosed before date X; an X-dated release is usable only if the task states the meeting time and a reliable release timestamp proves it was published before that time. This rule takes precedence over the end-of-day default below.
+- **Observation-date cutoff**: Otherwise, "as of YYYY-MM-DD" or "截至YYYY-MM-DD" includes the entire calendar day through 23:59:59. Use `publish_field < 'YYYY-MM-DD+1 00:00:00'` (exclusive next-day boundary), not a comparison with midnight at the start of the day; same-day releases may occur later.
+- When a task asks what was visible or knowable at a date, guard financial statements, ratings, defaults, announcements, dividends, holdings and macro releases by INFOPUBLDATE or the table-specific publish/release field.
+- A reliable publish/release field defines public-information availability. Do not require an additional INSERTTIME upper bound merely because the column exists.
+- Use INSERTTIME as a degraded availability proxy only when no reliable publish/release field exists, or when the task explicitly asks what was queryable in the database at the anchor date. Do not use UPDATETIME/XGRQ as a substitute for first availability.
+- A report-period ENDDATE alone does not prove point-in-time availability.
+- For interval records, check whether the end date is the last valid day or the first invalid day. Use end_date >= anchor_date for the former and end_date > anchor_date for the latter; table-specific rules take precedence.
+- Map generic intervals to schema fields such as IMPLEMENTDATE/REMOVEDATE, EFFECTIVEDATE/CANCELDATE, INDATE/OUTDATE and ACCESSIONDATE/DIMISSIONDATE.
+- For historical ST/*ST status, distinguish the effective period from when implementation and removal became public.
+- In cs_riskalert, ST/*ST means RISKALERTTYPE IN (1, 5, 12, 14); include 9 (delisting consolidation) or 10 (high-risk warning) only when explicitly requested.
+- For classification vintages, use the version valid at the anchor date, not the newest version in the database.
+- Index constituents as of ref_date: lc_indexcomponent WHERE INDEXINNERCODE=X AND INDATE <= ref_date AND (OUTDATE IS NULL OR OUTDATE > ref_date).
+
+## Runtime leakage and trading calendars
+- Do not call NOW(), CURDATE(), CURRENT_DATE, runtime-local dates or system time for task anchors.
+- Do not use future rows to screen samples, define groups, fill historical attributes or choose securities before the prediction/evaluation horizon.
+- Future returns or future labels are allowed only when explicitly requested as ex-post output; never use them to build the prior universe or features.
+- Recent N trading days, next trading day, month-end trading day, holding windows and moving averages must use get_trading_days, a trading calendar, or actual available trading/valuation dates.
+- Do not approximate trading-day windows with N natural days unless the task says natural days.
+- Previous trading day means MAX(trading date) < ref_date from the appropriate calendar or market table.
+- Listed at least N years: LISTEDDATE <= DATE_SUB(ref_date, INTERVAL N YEAR).
+
+## Latest/panel records and joins
+- Most recent visible financial period: filter INFOPUBLDATE <= as_of_date, then keep ROW_NUMBER() OVER (PARTITION BY COMPANYCODE ORDER BY ENDDATE DESC, INFOPUBLDATE DESC)=1.
+- Most recent period regardless of publish visibility: ROW_NUMBER() OVER (PARTITION BY COMPANYCODE ORDER BY ENDDATE DESC)=1.
+- Per-period panel: one row per COMPANYCODE, ENDDATE using ROW_NUMBER() OVER (PARTITION BY COMPANYCODE, ENDDATE ORDER BY INFOPUBLDATE DESC)=1.
+- Get INDEXINNERCODE from secumain WHERE SECUCODE='000300' for common index-code lookup unless schema comments indicate a better table.
+- If a stock task says "industry" without standard or level, default to Shenwan level-1 in lc_exgindustry: STANDARD=38 and FIRSTINDUSTRYCODE/FIRSTINDUSTRYNAME.
+- Always add IS NOT NULL guards on metrics used in ranking, regression, division or aggregation.
+
+## Calculation and quality rules
+- PERCENT_RANK(): continuous 0-1 rank. If ORDER BY metric DESC, top X% means PERCENT_RANK() <= X.
+- NTILE(N): equal-count buckets. If ORDER BY metric DESC, top 1/N bucket means NTILE(N)=1.
+- Z-score uses the task's sample cross-section: (x - mean) / std; if std is 0, return 0 or exclude according to the output contract.
+- MySQL STDDEV()/STDDEV_POP() use population std; pandas .std() defaults to sample std. Unless requested otherwise, use ddof=0.
+- Maximum drawdown: current value / cumulative historical max - 1; report the minimum drawdown.
+- Annualized volatility for daily fund/stock returns: population std of daily returns * sqrt(252), unless the task states another frequency or estimator.
+- Sharpe ratio for a daily return series: unless the task states another convention, assume a zero risk-free rate and compute mean(r_t) / std_pop(r_t) * sqrt(252), using population standard deviation (ddof=0).
+- Downside volatility: std of negative returns only, annualized by sqrt(252) for daily fund/stock paths unless the task states another frequency.
+- Window percentile default: mean(window_values <= current_value). Amplitude default: (window_high - window_low) / window_low.
+- Turnover/amount change-rate default: avg(current_window) / avg(previous_window) - 1, unless the task defines another reference window.
+- Monetary amounts are usually stored in yuan. For 亿元 return ROUND(value/100000000, 2); for 万元 return ROUND(value/10000, 2).
+- Ratio/weight fields may be decimals or percentages; confirm storage from schema comments before multiplying by 100.
+- Filter impossible values before division or ranking: denominator > 0, market cap > 0, PE > 0 for EP factor, HIGHPRICE >= LOWPRICE.
+- Raise ValueError in Python if a required DataFrame is empty or has insufficient rows.
+
+## Common formulas
+- Log-return slope annualization: exp(slope * 250) - 1, not slope ** 250 or exp(slope ** 250).
+- Compound daily return: (1 + daily_return)^250 - 1.
+- Period return annualized: (1 + total_return)^(250/n_trading_days) - 1.
+- Calendar-period simple return for a price or NAV series (year, quarter, month, or week): unless the task states otherwise, use the last valid observations on or before the preceding and target period ends; replace the target period end with the as-of date for an incomplete period, and use common valid endpoints when comparing multiple series. Do not apply this convention to rolling or event windows, or to returns requiring explicit cash-flow or coupon treatment.
+- Simple price return: (close_end - close_start) / close_start, with close_start > 0.
+- Altman Z-Score: 1.2*working_capital/total_assets + 1.4*retained_earnings/total_assets + 3.3*EBIT/total_assets + 0.6*market_value_equity/total_liabilities + revenue/total_assets.
+- Prefer lc_mainindexnew for precomputed growth rates, ROE and AVGNPYOYPASTFIVEYEAR when the task asks for those ready-made indicators.
+- Spearman IC is rank-based correlation; do not substitute Pearson unless the task says Pearson.
+- Information ratio (IR): mean(x) / std(x), where x is the periodic series specified by the task; do not annualize unless requested.
+
+## Events and deduplication
+- New high means current value strictly exceeds all previous values, excluding the current row.
+- Correct prior-window pattern: MAX(col) OVER (PARTITION BY ... ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING).
+- For event studies, define event date, first tradable/valuation date after event, holding window and exclusion conditions explicitly.
+- If multiple rows exist for the same security/date, use schema comments and task wording to choose the preferred row; otherwise deduplicate deterministically with ROW_NUMBER().

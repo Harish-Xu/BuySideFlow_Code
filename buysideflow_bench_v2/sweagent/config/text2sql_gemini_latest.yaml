@@ -1,0 +1,5 @@
+agent:
+  model:
+    name: "gemini/gemini-3.1-pro-preview"
+    api_key: "$GEMINI_API_KEY"
+    per_instance_cost_limit: 0.0

@@ -1,0 +1,31 @@
+WITH ranked_curve AS (
+    SELECT
+        DATE(c.ENDDATE) AS obs_date,
+        c.CURVECODE,
+        c.CURVETYPE,
+        c.YEARSTOMATURITY,
+        c.YIELD,
+        c.UPDATETIME,
+        ROW_NUMBER() OVER (
+            PARTITION BY DATE(c.ENDDATE), c.CURVECODE, c.YEARSTOMATURITY
+            ORDER BY c.UPDATETIME DESC, c.ID DESC
+        ) AS rn
+    FROM bond_cbyieldcurve c FORCE INDEX (IX_BOND_CBYIELDCURVE)
+    WHERE c.ENDDATE >= DATE('2025-01-01')
+      AND c.ENDDATE < DATE('2026-01-01')
+      AND c.CURVECODE IN (10, 195, 199)
+      AND c.YIELDTYPECODE = 1
+      AND c.YEARSTOMATURITY IN (1, 3, 5, 10)
+      AND c.YIELD IS NOT NULL
+      AND c.UPDATETIME < DATE_ADD(DATE(c.ENDDATE), INTERVAL 1 DAY)
+)
+SELECT
+    obs_date,
+    CURVECODE,
+    CURVETYPE,
+    YEARSTOMATURITY,
+    YIELD,
+    UPDATETIME
+FROM ranked_curve
+WHERE rn = 1
+ORDER BY obs_date, CURVECODE, YEARSTOMATURITY;

@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+cache/
+logs/
+output/
+bigquery_credential.json
+snowflake_credential.json
+

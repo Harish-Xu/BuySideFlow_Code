@@ -1,0 +1,13 @@
+# The pinned upstream source imports every provider SDK at module import time.
+# Versions are intentionally unconstrained because the upstream commit did not
+# publish its referenced requirements.txt. Capture the resolved environment in
+# the experiment manifest.
+dashscope
+docker
+google-generativeai
+groq
+gymnasium
+litellm
+openai
+requests
+tiktoken

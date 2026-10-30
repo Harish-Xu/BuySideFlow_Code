@@ -1,0 +1,13 @@
+agent:
+  model:
+    name: "kimi-k2.6"
+    api_base: "$MOONSHOT_API_BASE"
+    api_key: "$MOONSHOT_API_KEY"
+    per_instance_cost_limit: 0.0
+    temperature: 0.6
+    top_p: 0.95
+    completion_kwargs:
+      parallel_tool_calls: false
+      extra_body:
+        thinking:
+          type: "disabled"

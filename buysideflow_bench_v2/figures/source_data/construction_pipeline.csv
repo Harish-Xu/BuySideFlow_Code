@@ -1,0 +1,4 @@
+stage,checks,outcome
+Draft pool,investment workflows; sell-side reports; quantitative-investing communities; investor forums,411 initial draft tasks: 171 stock; 98 bond; 122 fund; 20 macro
+"Task construction, standardization, and version updates",disclosure and release dates; event windows; forward returns; neutralization; rebalancing; transaction costs; effective dates; deduplication; Top-K outputs,408 released tasks: 166 stock; 93 bond; 125 fund; 24 macro
+Reference development and audit,408-task replay; point-in-time rules; output contracts; passed-submission PIT audit,current references replayed 408/408; 93 accepted submissions independently audited for workflow PIT correctness

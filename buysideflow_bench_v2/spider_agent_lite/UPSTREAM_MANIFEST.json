@@ -1,0 +1,41 @@
+{
+  "repository": "https://github.com/xlang-ai/Spider2.git",
+  "commit": "cafb867313aab4e674652054198f383cf4018943",
+  "source_subdir": "methods/spider-agent-lite",
+  "retrieved_at": "2026-09-25",
+  "excluded": [
+    "bigquery_credential.json",
+    "snowflake_credential.json",
+    "logs/",
+    "output/"
+  ],
+  "files": {
+    "README.md": "91875c76ce1960991f4f72a29513388cbc1536eaeb7d410041013e65e3a46a7a",
+    "get_spider2lite_submission_data.py": "62461a94f0c59ee0df0a8a65ee6be372b87db86a560930e75cd72baefcbfbd62",
+    "run.py": "6a8fadc013e2a74895d9c257b950d0424e6c929a337100fa6153cf449be22dc4",
+    "spider_agent/agent/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "spider_agent/agent/action.py": "7e12ee9e7b2c481c1d188cac9e7690b4e03c2a44be6e0af3b2f54f11d6218042",
+    "spider_agent/agent/agents.py": "d5d5d0d091c5f9fab9dc01e8f84d6c0627210e0d8b205d4753bedfc4c22f7b50",
+    "spider_agent/agent/models.py": "2f52fbc266e96139f258a28a920f2790c39f4a3346fe8ea3147124b1ac3a3c87",
+    "spider_agent/agent/prompts.py": "0253281ea4702b9baa6e4b551c594861e74a1f5ae934e8186c36aa366e1af830",
+    "spider_agent/agent/sql_template.py": "6f139b2dc05bfb65e56e39ab69d08596e50f2ce8b616f0555c3f22669c2686ac",
+    "spider_agent/configs/__init__.py": "42d693cabebfad10985a1c686bbe5b09684020acd0367bbae0cf3450ad22ef62",
+    "spider_agent/configs/general.py": "63318e09c67ba260e3513c1ab2e943f79a994a13af80acb115c62410bcf85d15",
+    "spider_agent/controllers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "spider_agent/controllers/python.py": "d5cb291b7b4c7c38d909e087540d5714c0f69dfcc17b0e37b49c8edbb45461be",
+    "spider_agent/controllers/setup.py": "43ae8eb4fdbcec6922ebd6f8be21daa19dbd62cd00649a0ffa5f08bcd57316a0",
+    "spider_agent/envs/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "spider_agent/envs/spider_agent.py": "0af04f7f3ea34df594e95d167c8fab0b6a70822a2d0408fa42ab262d7f971a2f",
+    "spider_agent/envs/utils.py": "c88218cd53f0e49b8564f5acd81cf7586bdda3de864fa6661fbdcb82a529a4d7",
+    "spider_agent/images/spider_agent-image/Dockerfile": "71dc470e0e8f14b5d642e19cc59d77cdc405f6d88c2d18a963e7ce17eb3df045",
+    "spider_agent/images/spider_agent_clickhouse-image/Dockerfile": "2e6cd7a2c855789feaebae1105e93c63b55848f32836bc79e2cae70c2288cf6b",
+    "spider_agent/images/spider_agent_clickhouse-image/entrypoint.sh": "a97f3f417d49bdbbc86f00c724a2bbb985fc3223ebd8dcab8bdcf400ea917eb0",
+    "spider_agent/images/spider_agent_postgres-image/Dockerfile": "48dccb974db6cb16bdfb26339fce335b89d65413e95a268d700158cf2d236af9",
+    "spider_agent/images/spider_agent_postgres-image/init.sh": "770c39e091fa4285bd5b080f61b6024cc88f98ba03bddf3f6d9791e44b36acd6",
+    "spider_agent_setup_lite.py": "43fc3657ee2b36933a6ca4daa6d9979da57ef6599d77921848ed3c173cf99524"
+  },
+  "license": {
+    "path": "LICENSE",
+    "sha256": "fc8aef2000733079c37d42876179d928ae1634dbe088b81bf54e0f14c68aa1a3"
+  }
+}

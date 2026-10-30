@@ -1,0 +1,60 @@
+-- name: index_components
+SELECT DISTINCT
+    sm.INNERCODE,
+    sm.COMPANYCODE,
+    sm.SECUCODE AS stock_code,
+    COALESCE(NULLIF(sm.SECUABBR, ''), NULLIF(sm.CHINAMEABBR, ''), sm.CHINAME) AS stock_name,
+    sm.LISTEDSECTOR
+FROM secumain idx
+JOIN lc_indexcomponent ic
+  ON ic.INDEXINNERCODE = idx.INNERCODE
+JOIN secumain sm
+  ON sm.INNERCODE = ic.SECUINNERCODE
+WHERE idx.SECUCATEGORY = 4
+  AND idx.SECUCODE = '000852'
+  AND idx.SECUMARKET = 83
+  AND ic.INDATE <= TIMESTAMP('${as_of_dt}')
+  AND (ic.OUTDATE IS NULL OR ic.OUTDATE > TIMESTAMP('${as_of_dt}'))
+  AND sm.SECUCATEGORY = 1
+  AND sm.SECUMARKET IN (83, 90)
+  AND sm.COMPANYCODE IS NOT NULL
+
+-- name: financial_records
+SELECT
+    m.COMPANYCODE,
+    DATE(m.ENDDATE) AS end_date,
+    m.TOTALASSETGROWRATE AS total_asset_growth,
+    m.OPERATINGREVENUEGROWRATE AS revenue_growth,
+    m.DEBTASSETSRATIO AS debt_ratio,
+    m.INFOPUBLDATE,
+    m.INSERTTIME,
+    m.JSID,
+    m.ID,
+    CAST(NULL AS SIGNED) AS IFADJUSTED,
+    'main' AS source_table
+FROM lc_mainindexnew m FORCE INDEX (IX_LC_MAININDEXNEW)
+WHERE m.COMPANYCODE IN (${company_values})
+  AND m.ENDDATE IN (DATE('2023-12-31'), DATE('2024-12-31'))
+  AND m.INFOPUBLDATE <= TIMESTAMP('${as_of_dt}')
+  AND COALESCE(m.INSERTTIME, m.INFOPUBLDATE) <= TIMESTAMP('${as_of_dt}')
+  AND m.DEBTASSETSRATIO IS NOT NULL
+UNION ALL
+SELECT
+    s.COMPANYCODE,
+    DATE(s.ENDDATE) AS end_date,
+    s.TOTALASSETGROWRATE AS total_asset_growth,
+    s.OPERATINGREVENUEYOY AS revenue_growth,
+    s.DEBTASSETSRATIO AS debt_ratio,
+    s.INFOPUBLDATE,
+    s.INSERTTIME,
+    s.JSID,
+    s.ID,
+    s.IFADJUSTED,
+    'stib' AS source_table
+FROM lc_stibmainindex s FORCE INDEX (IX_LC_STIBMAININDEX)
+WHERE s.COMPANYCODE IN (${company_values})
+  AND s.ENDDATE IN (DATE('2023-12-31'), DATE('2024-12-31'))
+  AND s.INFOPUBLDATE <= TIMESTAMP('${as_of_dt}')
+  AND COALESCE(s.INSERTTIME, s.INFOPUBLDATE) <= TIMESTAMP('${as_of_dt}')
+  AND s.IFMERGED = 1
+  AND s.DEBTASSETSRATIO IS NOT NULL

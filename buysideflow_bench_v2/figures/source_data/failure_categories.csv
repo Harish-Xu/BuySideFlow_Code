@@ -1,0 +1,6 @@
+Run,Logic mismatch,Artifact mismatch,Generation/schema,Timeout/syntax,AI mismatch
+GPT-5.5,315,9,0,4,1
+Claude-Opus-4.7,323,15,1,13,0
+GLM-5.1,307,19,6,25,0
+DeepSeek-V4-Flash,312,22,4,1,1
+Qwen3.6-Plus,294,30,24,16,1

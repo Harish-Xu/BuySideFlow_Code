@@ -1,0 +1,54 @@
+## Optional schema-selection guidance
+
+Use this file only as high-frequency table-selection hints. Schema tools and table/column comments are authoritative.
+
+## Indicator -> table mapping
+
+| Indicator | Prefer table | Key fields | Common wrong turn |
+|-----------|--------------|------------|-------------------|
+| Revenue/profit growth rate | lc_mainindexnew | OPERATINGREVENUEGROWRATE / NETPROFITGROWRATE | Recomputing from raw statements when a ready-made indicator is requested |
+| Total profit growth rate | lc_mainindexnew | TOTALPROFEIGROWRATE | Using lc_maindatanew raw profit directly |
+| 5-year average profit growth | lc_mainindexnew | AVGNPYOYPASTFIVEYEAR | Substituting another growth column |
+| ROE ready-made ratio | lc_mainindexnew | ROE, INFOPUBLDATE | Using raw statements unless the task asks for consolidated statement data |
+| Consolidated statement metrics | lc_maindatanew | MARK=1, COMPANYCODE, ENDDATE, INFOPUBLDATE | Forgetting MARK=1 when consolidated data is required |
+| Stock turnover rate | qt_performance | TURNOVERRATE, INNERCODE, TRADINGDAY | qt_dailyquote does not carry TURNOVERRATE |
+| Negotiable market cap / PE / PEG | lc_dindicesforvaluation | NEGOTIABLEMV / PE / PEG, INNERCODE, TRADINGDAY | Joining by COMPANYCODE |
+| Stock OHLC | qt_dailyquote | INNERCODE, TRADINGDAY, OHLC fields | Using index or fund quote tables |
+| Index OHLC | qt_indexquote | INNERCODE, TRADINGDAY, OHLC fields | Using stock quote tables |
+| ETF / LOF / closed-end fund OHLC | qt_fundsperformancehis | INNERCODE, TRADINGDAY, OHLC fields | Using stock quote tables |
+| Index constituents | lc_indexcomponent | INDEXINNERCODE, SECUINNERCODE, INDATE, OUTDATE | Joining constituent security through the wrong key |
+| ST/risk-alert records | cs_riskalert | RISKALERTTYPE, IMPLEMENTDATE, REMOVEDATE | Inferring only from SECUABBR text |
+| Industry classification | lc_exgindustry | COMPANYCODE, STANDARD=38 by default, FIRSTINDUSTRYCODE/NAME, INFOPUBLDATE, CANCELDATE | Joining by INNERCODE or using IFPERFORMED=1 for a historical date |
+| Trading calendar | get_trading_days or qt_tradingdaynew | TRADINGDATE, IFTRADINGDAY, SECUMARKET | Looking for TRADINGDAY in qt_tradingdaynew |
+
+## Security master and index lookup
+
+- secumain.SECUCATEGORY=1 is stock securities in the schema business fields.
+- Do not hard-code a fund SECUCATEGORY value from memory; confirm through schema comments or use fund-domain tables.
+- For stock index lookup, prefer secumain by code/name, then use its INNERCODE:
+  SELECT INNERCODE FROM secumain WHERE SECUCODE='000300' AND SECUMARKET=83 LIMIT 1
+- Use that INNERCODE as INDEXINNERCODE in lc_indexcomponent and directly as INNERCODE in qt_indexquote.
+- lc_indexbasicinfo.INDEXCODE relates to secumain.INNERCODE; do not assume it exposes an INNERCODE column.
+- secumain.SECUABBR is the normal display abbreviation. CHINAME and CHINAMEABBR also exist, but represent different name fields.
+
+## Join path rules
+
+| Table | Join path | Notes |
+|-------|-----------|-------|
+| qt_dailyquote | INNERCODE -> secumain.INNERCODE | stock-level quote data |
+| qt_indexquote | INNERCODE -> secumain.INNERCODE | index-level quote data |
+| qt_fundsperformancehis | INNERCODE -> secumain.INNERCODE | listed fund quote data |
+| qt_performance | INNERCODE -> secumain.INNERCODE | stock performance data |
+| lc_dindicesforvaluation | INNERCODE -> secumain.INNERCODE | daily valuation indicators |
+| lc_indexcomponent | INDEXINNERCODE for index, SECUINNERCODE for constituent | constituent security is not INDEXINNERCODE |
+| lc_mainindexnew | COMPANYCODE -> secumain.COMPANYCODE | no INNERCODE or SECUCODE in this table |
+| lc_maindatanew | COMPANYCODE -> secumain.COMPANYCODE | no INNERCODE or SECUCODE in this table |
+| lc_exgindustry | COMPANYCODE -> secumain.COMPANYCODE | company-level industry data |
+| lc_qfinancialindexnew | COMPANYCODE -> secumain.COMPANYCODE | single-quarter financial indicators |
+
+## Financial table choice
+
+- Use lc_mainindexnew for ready-made financial ratios and growth indicators.
+- Use lc_maindatanew for raw financial statement items and consolidated-statement tasks.
+- Use lc_qfinancialindexnew only when the task explicitly asks for single-quarter indicators.
+- Both lc_mainindexnew and lc_maindatanew carry ENDDATE and INFOPUBLDATE; choose row granularity according to the task.

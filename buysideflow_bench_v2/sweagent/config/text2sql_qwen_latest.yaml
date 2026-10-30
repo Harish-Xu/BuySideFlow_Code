@@ -1,0 +1,10 @@
+agent:
+  model:
+    name: "qwen3.6-plus"
+    api_base: "$DASHSCOPE_API_BASE"
+    api_key: "$DASHSCOPE_API_KEY"
+    per_instance_cost_limit: 0.0
+    completion_kwargs:
+      parallel_tool_calls: false
+      extra_body:
+        enable_thinking: false

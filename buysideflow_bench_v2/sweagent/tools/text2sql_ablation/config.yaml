@@ -1,0 +1,13 @@
+tools:
+  reveal_reference_result:
+    docstring: |
+      [Ablation Required Tool] After you have written code and verified it with run_code, and before submit, you must call this tool once to inspect the reference result.
+
+      This tool returns the actual execution output of the reference solution, such as a DataFrame, image, or scalar value. Compare it against your latest run_code result carefully, including selected columns, filters, join logic, formulas, row count, ordering, and key values.
+
+      If you find any mismatch, revise your solution and rerun run_code before deciding whether to submit. This is guidance, not an additional hard gate after reveal_reference_result.
+
+      Important: if you try to submit before ever calling reveal_reference_result, the submission will still be rejected by the system.
+
+      Each question can call this tool at most 2 times. Timeout calls do not consume quota.
+    arguments: []

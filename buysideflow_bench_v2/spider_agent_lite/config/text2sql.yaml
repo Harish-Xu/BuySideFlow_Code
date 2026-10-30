@@ -1,0 +1,28 @@
+version: 1
+dataset: data/dataset
+evaluator: run_eval.py
+shared_assets:
+  schema: sweagent/text2sql/assets/gildata_schema.json
+  table_catalog: sweagent/text2sql/assets/gildata_table_catalog.json
+  business_background: sweagent/text2sql/assets/business_background.txt
+  selection_guidance: sweagent/text2sql/assets/selection_guidance.txt
+  fund_rules: sweagent/text2sql/assets/fund_business_rules.txt
+  bond_rules: sweagent/text2sql/assets/bond_business_rules.txt
+runtime_contract:
+  require_run_code_before_submit: true
+  require_latest_run_code_success: true
+  preserve_upstream_decision_loop: true
+  max_run_code_calls: 100
+  snapshot_id_env: DB_SNAPSHOT_ID
+  snapshot_cutoff_env: DB_SNAPSHOT_CUTOFF
+model_request_defaults:
+  temperature: 0.0
+  top_p: null
+  max_tokens: 65536
+  max_steps: 300
+  retry_attempts: 20
+  retry_min_wait_seconds: 10.0
+  retry_max_wait_seconds: 120.0
+evidence:
+  preserve_raw_trajectory: true
+  normalized_schema: buysideflow-spider-agent-lite/v1

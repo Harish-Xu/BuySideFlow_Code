@@ -1,0 +1,8 @@
+agent:
+  model:
+    name: "glm-5.1"
+    api_base: "$ZHIPU_API_BASE"
+    api_key: "$ZHIPU_API_KEY"
+    per_instance_cost_limit: 0.0
+    completion_kwargs:
+      parallel_tool_calls: false

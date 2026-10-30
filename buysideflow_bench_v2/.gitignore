@@ -1,0 +1,33 @@
+sweagent/.env
+*.env
+.DS_Store
+.pytest_cache/
+# sweagent/__init__.py 在导入时断言该目录存在，故保留空目录占位
+trajectories/*
+!trajectories/.gitkeep
+# 子目录下的 trajectories/ 是从其他工作目录运行时写出的产物
+*/**/trajectories/
+**/__pycache__/
+*.pyc
+*.zip
+data/dataset/results/.cache/
+data/dataset/results/**/.cache/
+
+# 派生 manifest：由 python run_manifest.py 重建；不要签入
+# 该文件读取 results/<qid>/result.csv 表头作为 output_schema，
+# 容易与最新 result.csv 不一致；评测真源是 question/*.jsonl + results/<qid>/
+data/dataset/manifest.generated.jsonl
+
+# 本地运行产物与环境：体积大，仅本地使用或可重建
+/outputs/
+/output/
+/submission/
+/.venv*/
+
+# 双盲审计揭盲密钥：投稿 data.zip 亦不包含；评审结束前不公开
+data/evaluation/**/restricted/
+
+# 个人编辑器 / agent 配置
+.claude/settings.local.json
+.vscode/
+.codex/

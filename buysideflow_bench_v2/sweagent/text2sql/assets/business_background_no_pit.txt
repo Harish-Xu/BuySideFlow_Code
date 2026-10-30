@@ -1,0 +1,58 @@
+You are working with a MySQL 8.0 JYDB/gildata financial database. Use these rules only as cross-domain background; task-specific fund or bond rules are injected separately when relevant.
+
+## Data conventions
+- TRADINGDAY: market trading date in quote, valuation and performance tables.
+- TRADINGDATE: date column in qt_tradingdaynew; do not confuse it with TRADINGDAY.
+- ENDDATE: financial reporting period end date.
+- INFOPUBLDATE: information publish date.
+- For fin_derivative, lc_maindatanew and nq_mainindexnew, deduplicate periodic financial rows by COMPANYCODE+ENDDATE with MARK priority 1 > 8 > 7 > 6 > 2 unless the task states another report口径. Do not apply this to other MARK fields; use IFMERGED/IFADJUSTED when available.
+- Use INNERCODE for security-level joins and COMPANYCODE for company-level joins.
+- A-share stock universe: secumain WHERE SECUMARKET IN (83,90) AND SECUCATEGORY=1.
+- Hong Kong stocks are in hk_secumain, not secumain.
+- In cs_riskalert, ST/*ST means RISKALERTTYPE IN (1, 5, 12, 14); include 9 (delisting consolidation) or 10 (high-risk warning) only when explicitly requested.
+
+## Trading calendars
+- Recent N trading days, next trading day, month-end trading day, holding windows and moving averages must use get_trading_days, a trading calendar, or actual available trading/valuation dates.
+- Do not approximate trading-day windows with N natural days unless the task says natural days.
+- Previous trading day means MAX(trading date) < ref_date from the appropriate calendar or market table.
+- Listed at least N years: LISTEDDATE <= DATE_SUB(ref_date, INTERVAL N YEAR).
+
+## Latest/panel records and joins
+- Most recent period: ROW_NUMBER() OVER (PARTITION BY COMPANYCODE ORDER BY ENDDATE DESC)=1.
+- Per-period panel: one row per COMPANYCODE, ENDDATE using ROW_NUMBER() OVER (PARTITION BY COMPANYCODE, ENDDATE ORDER BY INFOPUBLDATE DESC)=1.
+- Get INDEXINNERCODE from secumain WHERE SECUCODE='000300' for common index-code lookup unless schema comments indicate a better table.
+- If a stock task says "industry" without standard or level, default to Shenwan level-1 in lc_exgindustry: STANDARD=38 and FIRSTINDUSTRYCODE/FIRSTINDUSTRYNAME.
+- Always add IS NOT NULL guards on metrics used in ranking, regression, division or aggregation.
+
+## Calculation and quality rules
+- PERCENT_RANK(): continuous 0-1 rank. If ORDER BY metric DESC, top X% means PERCENT_RANK() <= X.
+- NTILE(N): equal-count buckets. If ORDER BY metric DESC, top 1/N bucket means NTILE(N)=1.
+- Z-score uses the task's sample cross-section: (x - mean) / std; if std is 0, return 0 or exclude according to the output contract.
+- MySQL STDDEV()/STDDEV_POP() use population std; pandas .std() defaults to sample std. Unless requested otherwise, use ddof=0.
+- Maximum drawdown: current value / cumulative historical max - 1; report the minimum drawdown.
+- Annualized volatility for daily fund/stock returns: population std of daily returns * sqrt(252), unless the task states another frequency or estimator.
+- Sharpe ratio for a daily return series: unless the task states another convention, assume a zero risk-free rate and compute mean(r_t) / std_pop(r_t) * sqrt(252), using population standard deviation (ddof=0).
+- Downside volatility: std of negative returns only, annualized by sqrt(252) for daily fund/stock paths unless the task states another frequency.
+- Window percentile default: mean(window_values <= current_value). Amplitude default: (window_high - window_low) / window_low.
+- Turnover/amount change-rate default: avg(current_window) / avg(previous_window) - 1, unless the task defines another reference window.
+- Monetary amounts are usually stored in yuan. For 亿元 return ROUND(value/100000000, 2); for 万元 return ROUND(value/10000, 2).
+- Ratio/weight fields may be decimals or percentages; confirm storage from schema comments before multiplying by 100.
+- Filter impossible values before division or ranking: denominator > 0, market cap > 0, PE > 0 for EP factor, HIGHPRICE >= LOWPRICE.
+- Raise ValueError in Python if a required DataFrame is empty or has insufficient rows.
+
+## Common formulas
+- Log-return slope annualization: exp(slope * 250) - 1, not slope ** 250 or exp(slope ** 250).
+- Compound daily return: (1 + daily_return)^250 - 1.
+- Period return annualized: (1 + total_return)^(250/n_trading_days) - 1.
+- Calendar-period simple return for a price or NAV series (year, quarter, month, or week): unless the task states otherwise, use the last valid observations on or before the preceding and target period ends, and use common valid endpoints when comparing multiple series. Do not apply this convention to rolling or event windows, or to returns requiring explicit cash-flow or coupon treatment.
+- Simple price return: (close_end - close_start) / close_start, with close_start > 0.
+- Altman Z-Score: 1.2*working_capital/total_assets + 1.4*retained_earnings/total_assets + 3.3*EBIT/total_assets + 0.6*market_value_equity/total_liabilities + revenue/total_assets.
+- Prefer lc_mainindexnew for precomputed growth rates, ROE and AVGNPYOYPASTFIVEYEAR when the task asks for those ready-made indicators.
+- Spearman IC is rank-based correlation; do not substitute Pearson unless the task says Pearson.
+- Information ratio (IR): mean(x) / std(x), where x is the periodic series specified by the task; do not annualize unless requested.
+
+## Events and deduplication
+- New high means current value strictly exceeds all previous values, excluding the current row.
+- Correct prior-window pattern: MAX(col) OVER (PARTITION BY ... ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING).
+- For event studies, define event date, first tradable/valuation date after event, holding window and exclusion conditions explicitly.
+- If multiple rows exist for the same security/date, use schema comments and task wording to choose the preferred row; otherwise deduplicate deterministically with ROW_NUMBER().

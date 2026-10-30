@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "contracts": {
+    "bond_010": {
+      "question_sha256": "cddb720f0991b1c75fdbdb36ea0aad1e518a113e16908de63a36b2c5d9397487",
+      "items": [
+        {
+          "id": "correlation_bars",
+          "op": "chart_type",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "用柱状图展示相关系数并标注数值",
+          "expected": "A bar chart of the rolling correlation coefficients, with a readable numerical value on each calculable bar. Raw social-financing or yield series are not substitutes for correlation bars."
+        },
+        {
+          "id": "months_and_values",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "图表采用相同月份范围",
+          "expected": "Use the same jointly available 2025 months and correlation values as the reference. Extra unavailable months, missing available months, or materially wrong bars fail. Labels may be Chinese or English; axes may be transposed if unambiguous."
+        }
+      ]
+    },
+    "fund_002": {
+      "question_sha256": "cffbbff81001b1493078e398a726bb9064ba9f8970a7b3d82b7b0441cb9f9f09",
+      "items": [
+        {
+          "id": "allocation_comparison",
+          "op": "chart_type",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "观察主动权益基金对申万一级基础化工的配置变化",
+          "expected": "Line charts must communicate fund chemical-industry allocation and the market chemical-industry share over report periods. An overweight line is optional; no reference-only series count, color, language or panel-layout requirement."
+        },
+        {
+          "id": "allocation_values",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "输出报告期、基金基础化工持仓占比、基础化工流通市值占比和超配比例，并画折线图",
+          "expected": "Report periods, labeled metrics and units must be unambiguous and the required curves must agree with the reference data within visual reading precision. Do not require exact pixel positions or axis padding."
+        }
+      ]
+    },
+    "fund_003": {
+      "question_sha256": "7aed0747d75c4083e93b97468c7a513e1794f713e132ea15dde2dc0f29b73f35",
+      "items": [
+        {
+          "id": "both_metrics",
+          "op": "chart_type",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "分别绘制对比图",
+          "expected": "Both rolling 63-trading-day cumulative return and rolling maximum drawdown comparisons must appear. Separate image files or panels in any arrangement are equally valid."
+        },
+        {
+          "id": "four_funds",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "006567、000574、160133、000628",
+          "expected": "Each metric must compare these four fund codes with identifiable series. No prescribed colors, title language or legend wording."
+        },
+        {
+          "id": "rolling_series",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "统计和绘图均使用四只基金都有完整滚动窗口的共同交易日",
+          "expected": "Check plotted dates and all four series against the reference. Fraction versus percentage scales and signed versus positive-magnitude drawdown are equivalent if labeled consistently; missing, swapped or materially wrong series fail."
+        },
+        {
+          "id": "common_interval",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "图中注明共同区间的起止日期和有效交易日数",
+          "expected": "The charts must state the jointly valid interval start, end, and number of valid market trading days. Labels may be Chinese or English; no prescribed location or formatting."
+        }
+      ]
+    },
+    "fund_047": {
+      "question_sha256": "7645f2460dd9e7b1b23e14c5d491dd12eb76620e3ccfc09192443669c15d9dee",
+      "items": [
+        {
+          "id": "concentration_lines",
+          "op": "chart_type",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "画折线图展示本基金与同类均值走势",
+          "expected": "Line chart(s) must distinguish 005739.OF concentration and the peer mean across report periods. No extra sample-count series is required."
+        },
+        {
+          "id": "concentration_values",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "2022Q4 至 2025Q4 已披露季报",
+          "expected": "Check the report-period coverage and the two concentration curves against the reference, with intelligible metric and percentage labels. Color, axis orientation and panel arrangement are free."
+        }
+      ]
+    },
+    "fund_098": {
+      "question_sha256": "36dcaf8570c0244bc7999ccae0d9a1f1c38fe745958632ab13758f83e0d81e38",
+      "items": [
+        {
+          "id": "both_curves",
+          "op": "chart_type",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "组合净值曲线和回撤曲线",
+          "expected": "Show both portfolio NAV and drawdown curves. Separate images or panels are equally valid."
+        },
+        {
+          "id": "portfolio_series",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "组合净值曲线和回撤曲线",
+          "expected": "The 2025 date coverage, NAV path and drawdown path must agree with reference data. Drawdown may be shown as signed loss or positive magnitude with a consistent label. Style and layout are free."
+        }
+      ],
+      "historical_question_sha256": [
+        "ce83d0de43c6a903126ba67f94bda9fa51710426ff0ee3add06d13c6f4d924f7"
+      ]
+    },
+    "fund_107": {
+      "question_sha256": "5cc5069fe5675c9b9b060eb91e4a99f7818320da0846075588054ab26291b378",
+      "historical_question_sha256": ["1fb22d28cdf05f575ec956f2feb7be3366932b1a7af58e307c869345fd5a0c02"],
+      "items": [
+        {
+          "id": "return_drawdown_scatter",
+          "op": "chart_type",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "绘制收益率与最大回撤散点图",
+          "expected": "A scatterplot relating fund returns to positive-magnitude maximum drawdown with intelligible percentage units. Either variable may be on either axis; transposing axes is semantically equivalent."
+        },
+        {
+          "id": "fund_distribution",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "各基金使用相同的起止日期",
+          "expected": "The fund observations and return/drawdown distribution must agree with the reference after allowing axis transposition and labeled fraction/percentage conversion. Compare corresponding variables, not pixel orientation."
+        },
+        {
+          "id": "top_fund_codes",
+          "op": "visual_semantic_match",
+          "weight": 1,
+          "mandatory": true,
+          "requirement_quote": "图中标注收益率最高和最大回撤最大的各3只基金代码，并列按基金代码升序选取",
+          "expected": "Label the top three return and top three drawdown fund codes (ties by ascending code), agreeing with the reference identities. A single point style with text labels is sufficient: separate colored highlights or three visual series are not required."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+-- bond_065 uses refer.py as the executable reference.
+-- The task is a 2024 year-end comparable MTN pool construction:
+--   1. year-end live 中期票据 from bond_code.BONDTYPELEVEL1 = 1800;
+--   2. fixed-rate, plain-term filter from bond_basicinfo:
+--      RATEIFFLOAT = 2, OPMATURITY IS NULL, and no put/call/coupon-reset/
+--      perpetual/subordinated keywords;
+--   3. 2024-12-31 ChinaBond recommended valuation from bond_cbvaluationall
+--      (CREDIBILITYCODE = 1, YIELDCODE = 2) for TRUEREMAINMATURITY in [1, 5],
+--      bucketed as [1, 3) and [3, 5];
+--   4. latest visible bond rating as of 2024-12-31 from bond_bdcreditgrading,
+--      filtered to CRDESC = 'AAA';
+--   5. 2024 secondary-market turnover from bond_basicquote, grouped by MAINCODE;
+--   6. top 10 by annual turnover within each term bucket.

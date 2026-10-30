@@ -1,0 +1,41 @@
+run,flag,all_tasks,passed_tasks,failed_tasks,failed_task_rate
+GPT-5.5,Classification vintage,47,6,41,0.12462006079027356
+GPT-5.5,Historical current classification,25,1,24,0.0729483282674772
+GPT-5.5,Listed-state current filter,30,5,25,0.07598784194528875
+GPT-5.5,Financial publish guard,1,0,1,0.00303951367781155
+GPT-5.5,Historical current incumbent,1,0,1,0.00303951367781155
+GPT-5.5,Current-state status filter,13,2,11,0.03343465045592705
+GPT-5.5,Bond concept vintage,0,0,0,0.0
+GPT-5.5,Risk-alert effective guard,0,0,0,0.0
+Claude-Opus-4.7,Classification vintage,68,6,62,0.17613636363636365
+Claude-Opus-4.7,Historical current classification,29,1,28,0.07954545454545454
+Claude-Opus-4.7,Listed-state current filter,44,5,39,0.11079545454545454
+Claude-Opus-4.7,Financial publish guard,20,0,20,0.056818181818181816
+Claude-Opus-4.7,Historical current incumbent,4,0,4,0.011363636363636364
+Claude-Opus-4.7,Current-state status filter,10,0,10,0.028409090909090908
+Claude-Opus-4.7,Bond concept vintage,2,0,2,0.005681818181818182
+Claude-Opus-4.7,Risk-alert effective guard,2,0,2,0.005681818181818182
+GLM-5.1,Classification vintage,124,5,119,0.3333333333333333
+GLM-5.1,Historical current classification,65,3,62,0.17366946778711484
+GLM-5.1,Listed-state current filter,80,6,74,0.20728291316526612
+GLM-5.1,Financial publish guard,36,2,34,0.09523809523809523
+GLM-5.1,Historical current incumbent,13,1,12,0.03361344537815126
+GLM-5.1,Current-state status filter,5,0,5,0.014005602240896359
+GLM-5.1,Bond concept vintage,5,0,5,0.014005602240896359
+GLM-5.1,Risk-alert effective guard,5,0,5,0.014005602240896359
+DeepSeek-V4-Flash,Classification vintage,119,12,107,0.31470588235294117
+DeepSeek-V4-Flash,Historical current classification,84,6,78,0.22941176470588234
+DeepSeek-V4-Flash,Listed-state current filter,46,1,45,0.1323529411764706
+DeepSeek-V4-Flash,Financial publish guard,36,1,35,0.10294117647058823
+DeepSeek-V4-Flash,Historical current incumbent,12,1,11,0.03235294117647059
+DeepSeek-V4-Flash,Current-state status filter,8,1,7,0.020588235294117647
+DeepSeek-V4-Flash,Bond concept vintage,4,0,4,0.011764705882352941
+DeepSeek-V4-Flash,Risk-alert effective guard,1,0,1,0.0029411764705882353
+Qwen3.6-Plus,Classification vintage,139,3,136,0.3726027397260274
+Qwen3.6-Plus,Historical current classification,112,2,110,0.3013698630136986
+Qwen3.6-Plus,Listed-state current filter,17,0,17,0.04657534246575343
+Qwen3.6-Plus,Financial publish guard,51,3,48,0.13150684931506848
+Qwen3.6-Plus,Historical current incumbent,12,0,12,0.03287671232876712
+Qwen3.6-Plus,Current-state status filter,1,0,1,0.0027397260273972603
+Qwen3.6-Plus,Bond concept vintage,5,0,5,0.0136986301369863
+Qwen3.6-Plus,Risk-alert effective guard,1,0,1,0.0027397260273972603

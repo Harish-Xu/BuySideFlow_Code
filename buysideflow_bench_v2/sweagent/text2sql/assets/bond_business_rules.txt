@@ -1,0 +1,94 @@
+## Bond and fixed-income business rules
+
+These rules apply only to bond/fixed-income tasks. Use them as business口径 guidance, then confirm exact columns with get_columns/request_schema.
+
+### 固收任务通用原则
+- Bond valuation, quote, trade and rating tables are large. Always restrict valuation/trading dates and candidate bonds before joining or ranking.
+- Historical存续、违约、评级、债券分类、主题属性 and listing/trading status must be reconstructed as of the observation date.
+- For announcement/rating/default events, use the event publish or announcement date when the task is about what was knowable at the time.
+- When the question says "最新" with an as_of_date, use the latest record not later than that as_of_date, not the database-current latest row.
+
+### 债券主数据和 universe
+- Prefer bond_code for bond code, bond name, issuer and bond type universe filters when schema comments support it.
+- bond_basicinfo exists and may contain bond static/terms fields; do not conclude it is absent unless schema tools say so.
+- For存续债, use maturity/delist/status fields according to schema comments and require the bond to be alive as of the observation date.
+- For same issuer comparisons, join/group by issuer/company fields confirmed from bond_code or related issuer tables, not by bond short name.
+
+### 企业类信用债
+- Default enterprise credit bond universe includes corporate/enterprise credit instruments such as 企业债、公司债、非公开发行公司债、中期票据、短融、超短融、PPN and similar enterprise-credit instruments.
+- Prefer bond_code.BONDTYPELEVEL1/BONDTYPELEVEL2 when available.
+- Recommended whitelist:
+  BONDTYPELEVEL1 IN (1600,1700,1800,2500,2600,2800,2900,3100,3200,3300,3700)
+  OR BONDTYPELEVEL2 IN (1901,1903).
+- This default excludes interest-rate bonds, financial bonds, ABS, convertibles/exchangeables and credit risk mitigation instruments unless the question explicitly includes them.
+
+### 城投债 / 地方融资平台
+- If the question says 城投债 / 平台债 without further qualification, default to the 聚源城投债主题 classification when available:
+  bond_conceptnature.CONCEPTTYPE = 40
+  AND bond_conceptnature.CONNATURE = 4041
+  AND bond_conceptnature.BEGINDATE <= observation_date
+  AND (bond_conceptnature.ENDDATE IS NULL OR bond_conceptnature.ENDDATE > observation_date).
+- bond_code.ISSUERNATURE = 100 means the issuer nature is 地方融资平台. This is an issuer-attribute口径; use it when the question explicitly asks for 地方融资平台发行人 / 平台主体口径, not as a replacement for the default 城投债主题口径.
+
+### 收益率曲线
+- For China government bond curve tasks, default to CURVECODE = 10 and YIELDTYPECODE = 1 unless the question explicitly specifies another curve or yield type.
+- For CDB, policy-bank, MTN, local-government-bond or other non-government curves, the question should specify the curve name or curve code; do not silently substitute a nearby curve when several curve definitions may match.
+- For bond_cbyieldcurve yield, spread and term-structure calculations, default to YIELDTYPECODE = 1 when the question does not specify yield type.
+- For China government bond curves, usually add CURVECODE = 10 when schema/table comments confirm the curve code.
+- Use the YIELD field for curve yield values. Butterfly spread = 2 * Y_mid - Y_short - Y_long when the task asks for a yield-curve butterfly.
+- YIELDTYPECODE is a field口径 constraint, not an independent metric.
+- If the task specifies spot/forward yield or another curve type, follow the task and schema comments.
+- For interpolation across tenors, sort by term, use the two bracketing tenors, and state/expose the interpolated benchmark rate if requested.
+
+### 估值和收益率
+- For ChinaBond recommended-valuation tasks, default to VPYIELD as the valuation yield unless the question explicitly asks for true yield, exercise yield, holding-period return or another yield field.
+- For ChinaBond valuation tasks, prefer recommended valuation rows when the question says 推荐估值 or when multiple valuation rows exist and schema comments expose a recommendation flag.
+- If multiple rows still exist for the same bond/date, choose deterministically with ROW_NUMBER() using recommendation flag, update/insert time, and ID/order fields where available.
+- Credit spread in bp is usually (bond valuation yield - benchmark curve yield) * 100 if both yields are in percent units; confirm unit semantics from schema comments.
+- Valuation full-price return uses full price path, not yield changes, unless the question explicitly asks for yield change.
+- Theme-bond valuation premium in bp usually means comparable non-theme median valuation yield minus theme-bond median valuation yield; define comparable groups from the task.
+
+### 排名、分位和边界
+- For same-observation-date cross-sectional bond percentile screens, use PERCENT_RANK() by default. If ORDER BY metric DESC, "top X%" means PERCENT_RANK() <= X; if ORDER BY metric ASC, "bottom X%" means PERCENT_RANK() <= X.
+- For a single bond's own history or a rolling time-series window, use the ECDF definition mean(window_values <= current_value), including the current observation. Do not use PERCENT_RANK() for these time-series windows unless the task explicitly requests it.
+- Questions that use cross-sectional "前/后 X%" should state whether boundary observations are included. Unless the task says otherwise, include the boundary after applying PERCENT_RANK().
+
+### 评级和违约 PIT
+- 评级表按评级对象选择：题目明确“债项评级/债券评级”时优先使用 bond_bdcreditgrading；明确“主体评级/发行人评级/担保人评级/银行评级”时优先使用 bond_comcreditgrading，并按该表的评级类型字段限定对象。
+- bond_creditgrading 是同时承载债项与主体字段的旧综合表。只有题目明确要求综合表特有口径，或已核实专表无法覆盖所需历史记录时才使用；不得仅因其同时含有多个评级字段而优先于对象明确的专表。
+- Latest rating as of as_of_date means rating records with publish/effective date <= as_of_date, then keep the latest per bond.
+- When rating outlook, watchlist/downward observation or downgrade events are queried, use the event announcement/publish date and deduplicate same bond/day deterministically.
+- “违约”指实际违约，不包括预计违约、评级调整或一般风险预警。
+- For "违约前 N 日" windows, use the default announcement/event date specified by the question; do not use future-known default dates for earlier screening.
+
+### 久期、剩余期限和换券
+- Remaining maturity should be computed as of the valuation/observation date, not current date.
+- When the task requires converting date differences into remaining-maturity, holding-period or attribution year fractions and neither the question nor schema comments specify a day-count convention, default to ACT/365. If the database already provides remaining maturity, annualized yield, duration, convexity or similar standardized fields, use the field's own vendor口径 and do not re-annualize or re-scale it. For volatility/risk metrics annualized from daily returns, default to 252 trading days unless the task says otherwise.
+- Duration matching must use the requested duration type, usually modified duration when the task says 修正久期.
+- In switch-trade analysis, compare bonds under the same issuer and comparable rating/status constraints before computing yield spread, duration gap and liquidity filters.
+- Interest-rate-risk compensation from duration gap should be marked separately when the task asks for it; do not hide it inside a single score.
+
+### 流动性和成交
+- "最近 N 个交易日成交天数" means count distinct trading days with valid trade/quote activity in the N trading-day window before or through the observation date as specified.
+- Use trading-day calendars or actual available bond trading/valuation dates, not N natural days.
+- Apply amount/volume > 0 guards when using成交额、成交量 or turnover proxies.
+
+### 骑乘和期限结构
+- Carry + roll / 骑乘 calculations require explicit buy tenor T, holding period h, current yield y, rolled-down tenor T-h and curve yield Y(T-h).
+- If using a simple duration approximation: Ride Return = y * h + (Y(T) - Y(T-h)) * D.
+- If the task asks for zero-coupon price法, compute prices from yields and annualize the holding return as requested.
+- For government-curve ride comparisons, fix the curve code and YIELDTYPECODE consistently across tenors and dates.
+
+### 债券估值收益归因
+- When a task asks for bond interval return attribution without specifying formulas, use a simplified valuation-based attribution, not full cash-flow total return.
+- For each bond, actual return defaults to valuation full-price return: P_end_full / P_start_full - 1. Use beginning valuation market value weights for portfolio aggregation unless the task says otherwise.
+- Define h as the interval year fraction, T0/T1 as start/end remaining maturities, y0/y1 as start/end bond valuation yields, D0/C0 as start modified duration/convexity, and G0(T)/G1(T) as the benchmark government curve yield linearly interpolated at tenor T. Convert percent yields to decimals before applying duration or convexity formulas.
+- Initial spread s0 = y0 - G0(T0); ending spread s1 = y1 - G1(T1).
+- Default duration-only five-factor attribution:
+  carry = y0 * h;
+  roll-down = -D0 * (G0(T1) - G0(T0));
+  curve change = -D0 * (G1(T1) - G0(T1));
+  spread change = -D0 * (s1 - s0);
+  security selection = actual return - carry - roll-down - curve change - spread change.
+- If the task explicitly asks to use convexity, apply RateImpact(delta_y) = -D0 * delta_y + 0.5 * C0 * delta_y^2 to roll-down, curve change and spread change instead of the duration-only terms above.
+- Portfolio-level attribution is the beginning-weighted sum of bond-level components. If asked for the largest contribution source, choose the component with the highest numerical contribution unless the task asks for drag/risk source.

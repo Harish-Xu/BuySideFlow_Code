@@ -1,0 +1,46 @@
+-- name: trade_date
+SELECT MAX(TRADINGDATE) AS trade_date
+FROM qt_tradingdaynew
+WHERE SECUMARKET = 83
+  AND IFTRADINGDAY = 1
+  AND TRADINGDATE < DATE('2025-09-21');
+
+-- name: shareholder_panel
+SELECT
+    COMPANYCODE,
+    ENDDATE AS report_date,
+    TRIM(SHLIST) AS shareholder_name,
+    HOLDSUM,
+    INFOPUBLDATE,
+    JSID,
+    ID
+FROM lc_mainshlistnew
+WHERE ENDDATE IN (DATE('2025-03-31'), DATE('2025-06-30'))
+  AND INFOPUBLDATE < DATE('2025-09-21')
+  AND INFOTYPECODE = 2
+  AND SHKINDCODE = 30
+  AND TRIM(SHLIST) LIKE '全国社保基金%组合';
+
+-- name: stock_map
+SELECT
+    COMPANYCODE,
+    INNERCODE,
+    SECUCODE AS stock_code,
+    COALESCE(SECUABBR, CHINAMEABBR, CHINAME, SECUCODE) AS stock_name
+FROM secumain
+WHERE SECUCATEGORY = 1
+  AND SECUMARKET IN (83, 90)
+  AND LISTEDSECTOR IN (1, 2, 6)
+  AND COMPANYCODE IS NOT NULL;
+
+-- name: price_snapshot
+SELECT INNERCODE, CLOSEPRICE, JSID, ID
+FROM qt_dailyquote
+WHERE TRADINGDAY = DATE('{trade_date}')
+  AND CLOSEPRICE > 0;
+
+-- name: valuation_snapshot
+SELECT INNERCODE, NEGOTIABLEMV, JSID, ID
+FROM lc_dindicesforvaluation
+WHERE TRADINGDAY = DATE('{trade_date}')
+  AND NEGOTIABLEMV > 0;

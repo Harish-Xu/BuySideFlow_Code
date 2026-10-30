@@ -1,0 +1,93 @@
+## Fund business rules
+
+These rules apply only to fund-domain tasks. Prefer schema/table comments over memory when a field name is uncertain.
+
+### 基金交易换手率
+- mf_fundtradeinfo.TURNOVERRATE 为近半年股票换手率，按小数存储，1 = 100%。百分比阈值须除以100后与该字段比较；以百分数输出时乘100。不要与近一年指标 TURNOVERRATEONEY 混用。
+
+### 主份额过滤
+- mf_fundarchives has one row per share class for the same fund.
+- For fund-level screening, ranking, counting, performance, holdings, or attribution tasks, default to the main share class unless the question explicitly asks for all share classes or a specific share class:
+  mf_fundarchives.MAINCODE = mf_fundarchives.SECURITYCODE.
+- Without this filter, A/C/E/J share classes may duplicate the same fund and distort fund counts, rankings, performance samples, and holdings statistics.
+
+### 基金分类字段
+- mf_jyfundtype.STANDARD = 75 means 聚源分类.
+- 聚源一级分类: FIRSTASSETCATCODE; 二级分类: SECASSETCATCODE; 三级分类: THIRDASSETCATCODE.
+
+### 主动权益基金
+- All conditions should hold unless the question specifies another definition:
+  1. mf_jyfundtype.SECASSETCATCODE IN ('1101','1201','1202','1203').
+  2. mf_fundarchives.INVESTMENTTYPE = 16 for active management when this archive field is used.
+  3. COALESCE(mf_fundarchives.IFFOF, 2) <> 1 to exclude FOF.
+- Use SECASSETCATCODE, not FIRSTASSETCATCODE, for this definition.
+
+### 债券型基金
+- Default public-fund bond-fund universe uses mf_jyfundtype.SECASSETCATCODE IN ('1301','1302','1303','1304','1305').
+- Do not mix偏债混合、QDII债券型 or 债券型FOF into this universe unless the question explicitly asks for them.
+- For pure bond funds, prefer the more specific pure-bond category when schema comments expose it; otherwise use the task wording and available SECASSETCATCODE/THIRDASSETCATCODE.
+
+### FOF 基金
+- Fund-of-Funds are usually identified by mf_fundarchives.IFFOF = 1.
+- Look-through/穿透 analysis must align underlying fund holdings to the same report period.
+
+### 固收+基金
+- Default口径: 偏债混合型 + 普通债券型（二级）.
+- Prefer THIRDASSETCATCODE IN ('120401','130202').
+- If THIRDASSETCATCODE is unavailable, fall back to SECASSETCATCODE IN ('1204','1302').
+- Whether to require main share, exclude FOF/QDII, or require open-ended funds depends on the question and should not be hard-coded beyond the stated task.
+
+### 基金净值收益默认口径
+- If the question asks for fund interval return, cumulative return, rolling return, drawdown, volatility, Sharpe or Calmar without specifying the net-value field, default to adjusted unit NAV / 复权单位净值.
+- If the question explicitly says 单位净值、累计净值、日增长率、业绩表现表 or another口径, follow the question.
+- Deduplicate same fund and same trading day deterministically.
+- Daily downside volatility = std of negative daily returns * sqrt(252).
+- Historical VaR/ES: VaR(95%) is the 5% quantile of daily returns; ES(95%) is the mean of returns <= VaR(95%).
+
+### Portfolio and attribution formulas
+- ERC/risk parity: portfolio_vol = sqrt(w' Cov w); MRC = Cov w / portfolio_vol; RC = w * MRC. Minimize sum((RC - mean(RC))^2) with the task's weight-sum and bound constraints.
+- Brinson three-term attribution: allocation = sum((wp - wb) * (rb - Rb)); selection = sum(wb * (rp - rb)); interaction = sum((wp - wb) * (rp - rb)); residual = portfolio_excess - allocation - selection - interaction.
+- Simple EPO: cov_tilde = D*((1-w)*Corr + w*I)*D; raw = inv(cov_tilde) @ signal / lambda; clip negative weights to 0 and normalize.
+- Anchored EPO: with s = signal/lambda and anchor a, gamma = sqrt(a' cov_tilde a) / sqrt(s' inv(cov_tilde) cov_tilde inv(cov_tilde) s); raw = inv(cov_tilde) @ ((1-w)*gamma*s + w*diag(var)*a), then clip and normalize.
+
+### 基金经理离任
+- A manager has left a fund position when mf_fundmanagernew.POSTNAME = 1, DIMISSIONDATE IS NOT NULL, and DIMISSIONDATE <= reference_date.
+- Count departures in a period with DIMISSIONDATE BETWEEN start_date AND end_date.
+- For company-level "离任人数/离任基金经理", treat it as fully dimissioned unless the question says "曾离任":
+  managers who left one fund but still have INCUMBENT=1 at the same company should not count as fully dimissioned.
+- Count people by PERSONALCODE, not by fund-position rows.
+
+### 基金经理任职和从业年限
+- mf_fundmanagernew.MANAGEMENTTIME stores cumulative public-fund management days.
+- Convert to years with MANAGEMENTTIME / 365.0.
+- For the latest tenure value per manager, take the latest or max MANAGEMENTTIME grouped by PERSONALCODE, guided by schema comments.
+
+### 基金规模口径
+- mf_scaleanalysis.NVI: disclosed NAV for a single share class.
+- mf_scaleanalysis.COMBNVI: combined/merged NAV across share classes.
+- Use COMBNVI when the question asks for 合并规模/合计规模.
+- Use NVI for a single fund share class unless the question states otherwise.
+- TOTALASSET is total fund assets, not necessarily net assets.
+
+### 申购赎回状态
+- APPLYINGTYPE values include 可申购、限大额、不可申购、封闭期、认购期、终止. REDEEMTYPE includes 可赎回、不可赎回.
+- First select the latest row, THEN test the status and amount together; never recover an older permitted status or non-null amount after a suspension.
+- LARGEAPPLYINGMAX IS NULL only establishes that this field provides no numeric limit. It can occur for unavailable subscriptions, missing/not-applicable amounts, or products without a recorded limit; NULL alone (even with 可申购) does not prove unlimited subscriptions. Never fill it with infinity or label it 无上限 without separate supporting evidence for the same share class and subscription channel.
+- For numeric-limit screening unless the task specifies otherwise, use the recorded, non-null monetary limit and an eligible subscription status: APPLYINGTYPE IN ('可申购', '限大额') AND LARGEAPPLYINGMAX >= threshold. Exclude unavailable/closed/unknown statuses and unknown amounts. This is a screen of known limits, not a claim to enumerate every product that could actually accept an order of X yuan.
+- If a task explicitly includes unlimited subscriptions, obtain an explicit no-limit flag or supporting record; do not infer it from NULL. Keep single-order monetary caps separate from daily/account/channel caps and ETF subscription-unit or total subscription limits. IFINSIDETRADE alone neither proves unlimited cash subscriptions nor excludes a LOF with a recorded monetary cap.
+
+### 场内/场外基金
+- mf_fundarchives.FLOATTYPE: 1 = 场内, 2 = 场外, 3 = 场内和场外. 支持场外申购 includes 2 and 3, not only 2; subscription availability still requires the latest eligible APPLYINGTYPE.
+- Unless the task explicitly narrows the product form, "开放式基金" uses the broad operating-form universe: mf_fundarchives.TYPE IN (2, 3, 4, 7, 8).
+- TYPE identifies the fund's operating/product form, not whether subscriptions or redemptions are currently available. For "当前可申购/可赎回", first apply the requested open-ended universe and then check the latest subscription/redemption state.
+
+### 持仓和重仓
+- Use the holding table matching the question: mf_keystockportfolio for quarterly key stock holdings, mf_stockportfoliodetail for stock holding details, mf_fundportifoliodetail for all-asset holding details, mf_bondportifoliodetail for bond holdings, or mf_portfoliodetailsall when the task asks for full portfolio details.
+- SERIALNUMBER is the holding rank within each fund/report period in these portfolio tables.
+- For "前N大重仓股/top N holdings", filter SERIALNUMBER <= N in the selected holding table.
+- For fund portfolio weights, confirm whether the ratio field is decimal 0-1 or percent from schema comments before multiplying by 100.
+
+### 基金经理变更事件计数
+- One manager change event = one calendar day on which at least one manager left a fund.
+- Multiple managers leaving the same fund on the same day count as one event.
+- Correct event key: INNERCODE + DATE(DIMISSIONDATE).

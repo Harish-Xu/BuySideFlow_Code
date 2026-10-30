@@ -1,0 +1,6 @@
+﻿metric,event_obs_count,unique_industry_index_count,mean_excess_return_pct,win_rate_pct,breakout_failure_ratio_pct
+T+1相对沪深300超额收益,22,12,0.8098,59.0909,
+T+5相对沪深300超额收益,22,12,0.0784,50.0,
+T+20相对沪深300超额收益,22,12,0.6277,54.5455,
+T+60相对沪深300超额收益,22,12,1.5883,50.0,
+breakout_failure_20d,22,12,,,27.2727
